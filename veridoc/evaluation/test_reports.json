@@ -1,0 +1,157 @@
+{
+  "timestamp": "2026-09-12T06:01:23Z",
+  "metrics": {
+    "total_documents": 4,
+    "confusion_matrix": {
+      "TP": 3,
+      "TN": 1,
+      "FP": 0,
+      "FN": 0
+    },
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "average_latency_ms": 75.06
+  },
+  "individual_results": [
+    {
+      "id": "sample_1_authentic",
+      "title": "Authentic Bank Statement",
+      "ground_truth": "AUTHENTIC",
+      "predicted": "AUTHENTIC",
+      "composite_score": 2.0,
+      "status": "CORRECT (TN)",
+      "total_latency_ms": 92.04,
+      "layers": {
+        "ela": {
+          "score": 0.0,
+          "flagged": false,
+          "outlier_blocks": 0,
+          "latency_ms": 62.19
+        },
+        "noise": {
+          "score": 0.0,
+          "flagged": false,
+          "spike_tiles": 0,
+          "latency_ms": 15.3
+        },
+        "copy_move": {
+          "score": 0.0,
+          "flagged": false,
+          "duplicate_patches": 0,
+          "latency_ms": 14.55
+        },
+        "geometry_logic": {
+          "score": 8.0,
+          "flagged": false,
+          "rationale": "Valid geometry and arithmetic"
+        }
+      }
+    },
+    {
+      "id": "sample_2_amount_forged",
+      "title": "Altered Balance Statement",
+      "ground_truth": "FORGED",
+      "predicted": "FORGED",
+      "composite_score": 82.8,
+      "status": "CORRECT (TP)",
+      "total_latency_ms": 69.84,
+      "layers": {
+        "ela": {
+          "score": 90.0,
+          "flagged": true,
+          "outlier_blocks": 2,
+          "latency_ms": 40.97
+        },
+        "noise": {
+          "score": 0.0,
+          "flagged": false,
+          "spike_tiles": 0,
+          "latency_ms": 14.73
+        },
+        "copy_move": {
+          "score": 0.0,
+          "flagged": false,
+          "duplicate_patches": 0,
+          "latency_ms": 14.14
+        },
+        "geometry_logic": {
+          "score": 88.0,
+          "flagged": true,
+          "rationale": "Arithmetic checksum mismatch in closing balance"
+        }
+      }
+    },
+    {
+      "id": "sample_3_date_font_forged",
+      "title": "Altered Tax/Date Salary Slip",
+      "ground_truth": "FORGED",
+      "predicted": "FORGED",
+      "composite_score": 75.44,
+      "status": "CORRECT (TP)",
+      "total_latency_ms": 70.51,
+      "layers": {
+        "ela": {
+          "score": 0.0,
+          "flagged": false,
+          "outlier_blocks": 0,
+          "latency_ms": 40.45
+        },
+        "noise": {
+          "score": 0.0,
+          "flagged": false,
+          "spike_tiles": 0,
+          "latency_ms": 15.29
+        },
+        "copy_move": {
+          "score": 0.0,
+          "flagged": false,
+          "duplicate_patches": 0,
+          "latency_ms": 14.77
+        },
+        "geometry_logic": {
+          "score": 82.0,
+          "flagged": true,
+          "rationale": "Vertical baseline jitter (-4px) & future date"
+        }
+      }
+    },
+    {
+      "id": "sample_4_cloned_signature",
+      "title": "Cloned Stamp Loan Sanction",
+      "ground_truth": "FORGED",
+      "predicted": "FORGED",
+      "composite_score": 69.0,
+      "status": "CORRECT (TP)",
+      "total_latency_ms": 67.84,
+      "layers": {
+        "ela": {
+          "score": 0.0,
+          "flagged": false,
+          "outlier_blocks": 0,
+          "latency_ms": 39.84
+        },
+        "noise": {
+          "score": 0.0,
+          "flagged": false,
+          "spike_tiles": 0,
+          "latency_ms": 13.89
+        },
+        "copy_move": {
+          "score": 0.0,
+          "flagged": false,
+          "duplicate_patches": 0,
+          "latency_ms": 14.11
+        },
+        "geometry_logic": {
+          "score": 75.0,
+          "flagged": true,
+          "rationale": "Cloned signatory block"
+        }
+      }
+    }
+  ]
+}

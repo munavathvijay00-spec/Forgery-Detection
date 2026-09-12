@@ -1,0 +1,111 @@
+{
+  "sample_1_authentic": {
+    "id": "sample_1_authentic",
+    "filename": "sample_1_authentic.png",
+    "title": "Authentic Bank Statement",
+    "type": "Bank Statement",
+    "ground_truth": "AUTHENTIC",
+    "expected_risk": "LOW",
+    "expected_score_range": [
+      0,
+      25
+    ],
+    "description": "Legitimate statement with uniform compression, natural scanning noise, perfect baseline alignment, and mathematically verified transaction sums.",
+    "tampered_regions": []
+  },
+  "sample_2_amount_forged": {
+    "id": "sample_2_amount_forged",
+    "filename": "sample_2_amount_forged.png",
+    "title": "Altered Balance Statement",
+    "type": "Bank Statement",
+    "ground_truth": "FORGED",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      75,
+      100
+    ],
+    "description": "Closing balance and summary totals spliced from INR 1,83,700 to INR 9,83,700. Shows severe ELA recompression deltas and local noise variance discontinuities.",
+    "tampered_regions": [
+      {
+        "field": "Closing Balance Row",
+        "box": [
+          765,
+          490,
+          875,
+          520
+        ],
+        "signal": "ELA & Noise Discontinuity"
+      },
+      {
+        "field": "Net Closing Summary",
+        "box": [
+          210,
+          574,
+          380,
+          598
+        ],
+        "signal": "Compression Artifact Splice"
+      }
+    ]
+  },
+  "sample_3_date_font_forged": {
+    "id": "sample_3_date_font_forged",
+    "filename": "sample_3_date_font_forged.png",
+    "title": "Altered Tax/Date Salary Slip",
+    "type": "Salary Certificate",
+    "ground_truth": "FORGED",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      65,
+      95
+    ],
+    "description": "Manipulated bonus period date and document expiry date. Features vertical baseline jitter (-4px drift) and character geometry/stroke-width variance.",
+    "tampered_regions": [
+      {
+        "field": "Bonus Period Date",
+        "box": [
+          62,
+          376,
+          160,
+          406
+        ],
+        "signal": "Baseline Jitter & Font Weight"
+      },
+      {
+        "field": "Header Document Expiry",
+        "box": [
+          620,
+          83,
+          790,
+          105
+        ],
+        "signal": "Font Alignment & Density"
+      }
+    ]
+  },
+  "sample_4_cloned_signature": {
+    "id": "sample_4_cloned_signature",
+    "filename": "sample_4_cloned_signature.png",
+    "title": "Cloned Stamp Loan Sanction",
+    "type": "Loan Approval Letter",
+    "ground_truth": "FORGED",
+    "expected_risk": "HIGH",
+    "expected_score_range": [
+      70,
+      98
+    ],
+    "description": "Approval seal and signature block duplicated via copy-move forgery to fake an Executive Director counter-signature.",
+    "tampered_regions": [
+      {
+        "field": "Cloned Executive Seal",
+        "box": [
+          570,
+          515,
+          840,
+          645
+        ],
+        "signal": "Copy-Move Normalized Correlation Match"
+      }
+    ]
+  }
+}
