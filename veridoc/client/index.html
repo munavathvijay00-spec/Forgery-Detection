@@ -5,744 +5,1016 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AegisDoc — On-Device Forgery Detection for Financial Documents</title>
   
-  <!-- PWA meta -->
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e40af' stroke-width='2.5'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='M9 12l2 2 4-4'/></svg>">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1e40af">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e40af' stroke-width='2.5'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='M9 12l2 2 4-4'/></svg>">
-  <link rel="stylesheet" href="styles.css?v=3.0.1">
+  
+  <!-- Fonts & Stylesheet -->
+  <link rel="stylesheet" href="styles.css?v=3.1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="security-bg-pattern"></div>
 
-  <!-- Top Navigation Bar -->
-  <header class="navbar">
-    <div class="brand-group">
-      <a href="#" class="brand-logo">
-        <div class="brand-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M9 12l2 2 4-4"/>
-          </svg>
-        </div>
-        <span>Aegis<span style="color: var(--color-primary)">Doc</span></span>
-      </a>
-
-      <nav class="nav-links">
-        <a href="#howItWorks" class="nav-link">How It Works</a>
-        <a href="#tamperChallenge" class="nav-link">Tamper Challenge</a>
-        <a href="#technology" class="nav-link">Technology</a>
-        <a href="#privacy" class="nav-link">Privacy & Trust</a>
-      </nav>
-    </div>
-
-    <div class="nav-badges">
-      <div class="privacy-badge" title="Zero cloud upload. Processed in local device memory.">
-        <span class="privacy-dot"></span>
-        <span>ON-DEVICE ENCLAVE</span>
-      </div>
-
-      <button id="openBridgeBtn" class="bridge-status-btn" title="Office Kit: Real-time phone to laptop bridge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-          <line x1="8" y1="21" x2="16" y2="21"/>
-          <line x1="12" y1="17" x2="12" y2="21"/>
+  <!-- ========================================================================
+       TOP BRAND NAVIGATION BAR
+       ======================================================================== -->
+  <header class="top-navbar">
+    <a href="#landing" class="nav-brand">
+      <div class="nav-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
         </svg>
-        <span id="bridgeStatusText">Office Kit: Standalone</span>
+      </div>
+      <span class="nav-brand-title">AegisDoc</span>
+      <span class="nav-brand-badge">iQOO Enclave</span>
+    </a>
+
+    <!-- Core Nav Links -->
+    <nav class="nav-links">
+      <a href="#landing" class="nav-link" data-route="landing">Overview</a>
+      <a href="#how-it-works" class="nav-link" data-route="how-it-works">How It Works</a>
+      <a href="#control-room" class="nav-link" data-route="control-room">Control Room</a>
+      <a href="#forensics" class="nav-link" data-route="forensics">Forensics Lab</a>
+      <a href="#results" class="nav-link" data-route="results">Audit Report</a>
+      <a href="#comparison" class="nav-link" data-route="comparison">Comparison</a>
+      <a href="#technology" class="nav-link" data-route="technology">Blueprint</a>
+      <a href="#challenge" class="nav-link" data-route="challenge">Tamper Challenge</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="nav-actions">
+      <!-- Voice Mic Trigger -->
+      <button id="voiceMicBtn" class="nav-icon-btn" title="Voice Commands (Say: 'Scan', 'Analyze', 'Read Verdict', 'Pair Laptop')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
       </button>
 
-      <a href="#workspaceSection" class="nav-scan-cta">Scan Document</a>
+      <!-- Office Kit Status Pill -->
+      <div id="openBridgeBtn" class="bridge-status-pill" title="Office Kit Phone-to-Laptop Bridge">
+        <span class="bridge-indicator"></span>
+        <span id="bridgeStatusText">Office Kit</span>
+      </div>
+
+      <!-- Quick Page Switcher (All 16 Experiences) -->
+      <div class="quick-switcher">
+        <button id="switcherToggleBtn" class="switcher-btn">
+          <span>Views (16)</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <div id="switcherMenu" class="switcher-menu">
+          <div class="switcher-group-title">Public & Storytelling</div>
+          <a href="#landing" class="switcher-item" data-route="landing">
+            <span>01. Landing Page</span><span class="switcher-tag">Editorial</span>
+          </a>
+          <a href="#how-it-works" class="switcher-item" data-route="how-it-works">
+            <span>02. How It Works</span><span class="switcher-tag">Story</span>
+          </a>
+          <a href="#impact" class="switcher-item" data-route="impact">
+            <span>15. About / Market Impact</span><span class="switcher-tag">Venture</span>
+          </a>
+
+          <div class="switcher-group-title">Live Execution & Labs</div>
+          <a href="#control-room" class="switcher-item" data-route="control-room">
+            <span>03. Live Demo</span><span class="switcher-tag">Control Room</span>
+          </a>
+          <a href="#forensics" class="switcher-item" data-route="forensics">
+            <span>04. Forensic Analysis</span><span class="switcher-tag">Lab</span>
+          </a>
+          <a href="#scanner" class="switcher-item" data-route="scanner">
+            <span>11. Mobile Scanner</span><span class="switcher-tag">Camera-First</span>
+          </a>
+          <a href="#processing" class="switcher-item" data-route="processing">
+            <span>12. Scan Processing</span><span class="switcher-tag">Cinematic</span>
+          </a>
+
+          <div class="switcher-group-title">Evidence & Verification</div>
+          <a href="#results" class="switcher-item" data-route="results">
+            <span>05. Forensic Results</span><span class="switcher-tag">Financial Report</span>
+          </a>
+          <a href="#risk-explorer" class="switcher-item" data-route="risk-explorer">
+            <span>06. Risk Explorer</span><span class="switcher-tag">Data Viz</span>
+          </a>
+          <a href="#comparison" class="switcher-item" data-route="comparison">
+            <span>07. Document Comparison</span><span class="switcher-tag">Split Slider</span>
+          </a>
+          <a href="#what-changed" class="switcher-item" data-route="what-changed">
+            <span>08. What Changed?</span><span class="switcher-tag">Diff Timeline</span>
+          </a>
+          <a href="#history" class="switcher-item" data-route="history">
+            <span>13. History Ledger</span><span class="switcher-tag">Activity Log</span>
+          </a>
+
+          <div class="switcher-group-title">Engineering, Trust & Games</div>
+          <a href="#technology" class="switcher-item" data-route="technology">
+            <span>10. Architecture</span><span class="switcher-tag">Blueprint</span>
+          </a>
+          <a href="#privacy" class="switcher-item" data-route="privacy">
+            <span>09. Privacy Center</span><span class="switcher-tag">Calm Minimal</span>
+          </a>
+          <a href="#responsible-ai" class="switcher-item" data-route="responsible-ai">
+            <span>14. Responsible AI</span><span class="switcher-tag">Transparency</span>
+          </a>
+          <a href="#challenge" class="switcher-item" data-route="challenge">
+            <span>16. Demo Challenge</span><span class="switcher-tag">Interactive Game</span>
+          </a>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="hero-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M12 16v-4M12 8h.01"/>
-        </svg>
-        <span>PRIVACY-FIRST ON-DEVICE FORENSICS · iQOO HACKATHON 2026</span>
-      </div>
-
-      <h1 class="hero-title">Know Before <span class="accent">You Trust.</span></h1>
-      <p class="hero-desc">
-        Detect suspicious alterations in financial documents — privately, intelligently, and directly on your device.
-        Analyzes pixel recompression, noise gradients, and typographic alignment with zero cloud leakage.
+  <!-- ========================================================================
+       PAGE VIEW 1 — LANDING PAGE: PREMIUM EDITORIAL FINTECH
+       ======================================================================== -->
+  <main id="view-landing" class="page-view view-editorial-landing active">
+    <div class="landing-hero-section">
+      <span class="editorial-kicker">Autonomous On-Device Financial Forensics</span>
+      <h1 class="landing-hero-title">Can You Trust This Document?</h1>
+      <p class="landing-hero-subtitle">
+        Digital tampering in banking statements and invoices is invisible to the naked human eye. AegisDoc computes error-level residuals, high-pass noise variances, and typographical drift directly inside your device's secure enclave in under 80 milliseconds.
       </p>
 
-      <div class="hero-ctas">
-        <a href="#workspaceSection" class="btn-primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="hero-cta-group">
+        <a href="#scanner" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
             <circle cx="12" cy="13" r="4"/>
           </svg>
           <span>Scan a Document</span>
         </a>
 
-        <a href="#tamperChallenge" class="btn-secondary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <a href="#control-room" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="5 3 19 12 5 21 5 3"/>
           </svg>
-          <span>Try Tamper Challenge</span>
+          <span>Launch Control Room</span>
+        </a>
+
+        <a href="#technology" class="btn-secondary">
+          <span>Explore Architecture →</span>
         </a>
       </div>
 
-      <!-- Hero Interactive Product Visualization Card -->
-      <div class="hero-visual-card">
-        <div class="visual-top-bar">
-          <div class="visual-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <line x1="9" y1="3" x2="9" y2="21"/>
-            </svg>
-            <span>Live Forensic Analysis Preview</span>
-          </div>
-          <div class="visual-status-pill">
-            <span class="privacy-dot" style="background:var(--color-danger); box-shadow:none;"></span>
-            <span>FLAGGED: 3 SIGNALS DETECTED</span>
-          </div>
+      <!-- Large Hero Document with Simulated Scan & Reveal -->
+      <div class="hero-document-stage">
+        <div class="hero-doc-preview">
+          <img src="samples/sample_2_amount_forged.png" alt="Manipulated Bank Statement">
+          <div class="hero-scan-beam"></div>
         </div>
 
-        <div class="visual-content-grid">
-          <div class="mock-statement">
-            <div class="mock-scan-beam"></div>
-            <div style="font-weight:700; color:var(--text-primary); margin-bottom:8px; font-size:0.85rem;">GLOBAL APEX BANK STATEMENT</div>
-            <div class="mock-line"><span>Account Number</span><span style="font-family:var(--font-mono)">9182 •••• 4410</span></div>
-            <div class="mock-line"><span>03-SEP-2026 NEFT Tech Salary</span><span>₹95,000.00</span></div>
-            <div class="mock-line"><span>05-SEP-2026 POS Supermart</span><span>-₹4,150.00</span></div>
-            <div class="mock-line tampered">
-              <span>Closing Balance (Modified)</span>
-              <span style="font-weight:700; color:var(--color-danger)">₹9,83,700.00 <span class="mock-tag">SPLICED</span></span>
-            </div>
-            <div style="margin-top:12px; font-size:0.72rem; color:var(--text-muted);">
-              Authentic baseline: ₹1,83,700.00 | Digital alteration detected in high-frequency DCT spectrum.
-            </div>
-          </div>
-
-          <div class="mock-forensic-hud">
-            <div>
-              <div class="mock-score-header">Forgery Risk Rating</div>
-              <div class="mock-score-display">
-                <span class="mock-score-val">82</span>
-                <span style="font-size:1rem; color:var(--text-muted); font-weight:700;">/ 100</span>
-              </div>
-              <div class="mock-checks">
-                <div class="mock-check-item" style="color:var(--color-danger)">⚠ ELA Compression Discontinuity (+38)</div>
-                <div class="mock-check-item" style="color:var(--color-danger)">⚠ Arithmetic Checksum Mismatch (+30)</div>
-                <div class="mock-check-item" style="color:var(--color-warning)">⚠ Local Noise Gradient Variance (+14)</div>
-                <div class="mock-check-item" style="color:var(--color-success)">✓ Container Metadata Integrity (0)</div>
-              </div>
-            </div>
-
-            <div style="font-size:0.72rem; color:var(--color-primary); background:var(--color-primary-light); padding:6px 10px; border-radius:4px; margin-top:12px;">
-              🔒 Processed in 72ms on-device. Zero network requests made.
-            </div>
+        <div class="hero-flagged-callout">
+          <div class="hero-risk-number">83%</div>
+          <div class="hero-risk-meta">
+            <strong>HIGH FORGERY RISK</strong>
+            <span>Closing Balance Digit '9' Spliced (+3.8x ELA Spike)</span>
           </div>
         </div>
       </div>
-
-      <!-- Trust Strip (4 Pillars) -->
-      <div class="trust-strip">
-        <div class="trust-item">
-          <div class="trust-item-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-              <line x1="12" y1="18" x2="12.01" y2="18"/>
-            </svg>
-            <span>On-Device Execution</span>
-          </div>
-          <p class="trust-item-desc">Sensitive bank statements and salary slips remain strictly inside your device hardware.</p>
-        </div>
-
-        <div class="trust-item">
-          <div class="trust-item-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            <span>Privacy-First Architecture</span>
-          </div>
-          <p class="trust-item-desc">Eliminates cloud PII liability and complies directly with RBI KYC and GDPR privacy rules.</p>
-        </div>
-
-        <div class="trust-item">
-          <div class="trust-item-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="16" x2="12" y2="12"/>
-              <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            <span>Explainable Evidence</span>
-          </div>
-          <p class="trust-item-desc">No black-box hallucination. Every risk score is backed by exact mathematical anomalies.</p>
-        </div>
-
-        <div class="trust-item">
-          <div class="trust-item-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span>Sub-80ms Real-Time</span>
-          </div>
-          <p class="trust-item-desc">Instant edge evaluation engineered for iQOO and Android mobile hardware.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: The Problem & Interactive Before / After Slider -->
-    <section class="section" id="theProblem">
-      <div class="section-header">
-        <div class="section-tag">Visual Verification Problem</div>
-        <h2 class="section-title">A document can look authentic and still be manipulated.</h2>
-        <p class="section-desc">
-          Drag the interactive slider below to see how a simple digit splice fools the naked eye, while the on-device ELA forensic layer exposes the differential compression history.
-        </p>
-      </div>
-
-      <div class="slider-container" id="comparisonSlider">
-        <div class="slider-image-wrapper">
-          <!-- Background: Manipulated statement with highlights -->
-          <img src="samples/sample_2_amount_forged.png" alt="Manipulated Document" class="slider-img" id="sliderManipulated">
-          
-          <!-- Foreground: Authentic baseline statement (clipped dynamically) -->
-          <img src="samples/sample_1_authentic.png" alt="Authentic Document" class="slider-img overlay" id="sliderAuthentic">
-
-          <div class="slider-handle" id="sliderHandle">
-            <div class="slider-handle-button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15 18 9 12 15 6"/>
-                <polyline points="9 18 3 12 9 6"/>
-              </svg>
-            </div>
-          </div>
-
-          <div class="slider-labels">
-            <span class="slider-pill" style="background:#059669;">← Authentic Original</span>
-            <span class="slider-pill" style="background:#dc2626;">Spliced Forgery →</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: Interactive Tamper Challenge ("Can You Spot the Forgery?") -->
-    <section class="section" id="tamperChallenge">
-      <div class="section-header">
-        <div class="section-tag">Interactive Jury Test</div>
-        <h2 class="section-title">Can you spot the forgery?</h2>
-        <p class="section-desc">
-          Two financial certificates are shown below. One is authentic; one has been subtly altered. Tap the document you believe is forged.
-        </p>
-      </div>
-
-      <div class="challenge-grid">
-        <div class="challenge-card" id="challengeCardA">
-          <span class="challenge-badge" style="background:var(--bg-subtle); color:var(--text-secondary);">DOCUMENT A</span>
-          <img src="samples/sample_1_authentic.png" alt="Candidate Document A" class="challenge-card-img">
-          <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">Certified Account Statement</div>
-          <div style="font-size:0.78rem; color:var(--text-muted);">Opening Balance: ₹1,18,500.00 | Closing: ₹1,83,700.00</div>
-        </div>
-
-        <div class="challenge-card" id="challengeCardB">
-          <span class="challenge-badge" style="background:var(--bg-subtle); color:var(--text-secondary);">DOCUMENT B</span>
-          <img src="samples/sample_3_date_font_forged.png" alt="Candidate Document B" class="challenge-card-img">
-          <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">Income & Salary Certificate</div>
-          <div style="font-size:0.78rem; color:var(--text-muted);">Bonus Period: 28-DEC-2027 | Expiry: 31-DEC-2028</div>
-        </div>
-      </div>
-
-      <div class="challenge-result-banner" id="challengeResultBanner">
-        <!-- Populated dynamically on click -->
-      </div>
-    </section>
-
-    <!-- Section: How It Works -->
-    <section class="section" id="howItWorks">
-      <div class="section-header">
-        <div class="section-tag">Forensic Workflow</div>
-        <h2 class="section-title">Four steps to absolute certainty.</h2>
-        <p class="section-desc">
-          From hardware sensor ingestion to mathematical proof in under 80 milliseconds.
-        </p>
-      </div>
-
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-num">01 / INGESTION</div>
-          <h3 class="step-title">Capture or Import</h3>
-          <p class="step-desc">Ingest through the high-resolution device camera or import PDFs and images from local storage.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-num">02 / DECOMPOSITION</div>
-          <h3 class="step-title">6-Layer Analysis</h3>
-          <p class="step-desc">Recompressed DCT error levels, Laplacian noise variance, copy-move matching, and baseline alignment are computed concurrently.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-num">03 / LOCALIZATION</div>
-          <h3 class="step-title">Pinpoint Anomalies</h3>
-          <p class="step-desc">Suspicious coordinates are mapped to pixel-level bounding boxes with calibrated severity scores.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-num">04 / EXPLANATION</div>
-          <h3 class="step-title">Executive Briefing</h3>
-          <p class="step-desc">Audio speech narration, interactive inspectable evidence, and exportable verification audit certificates.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: Dual-Layer Forensic Engine & Architecture -->
-    <section class="section" id="technology">
-      <div class="section-header">
-        <div class="section-tag">Technical Depth</div>
-        <h2 class="section-title">Multi-signal mathematical architecture.</h2>
-        <p class="section-desc">
-          AegisDoc does not rely on opaque LLM guesses. It correlates six orthogonal forensic signals to construct an irrefutable evidence trail.
-        </p>
-      </div>
-
-      <div class="tech-toggle-bar">
-        <button id="techToggleSimple" class="toggle-tab active">Executive Overview</button>
-        <button id="techToggleDeep" class="toggle-tab">Technical Depth (Jury)</button>
-      </div>
-
-      <div class="pipeline-diagram">
-        <div class="pipeline-nodes" id="pipelineNodes">
-          <div class="pipeline-node">
-            <div class="pipeline-node-name">
-              <span>📷 Document Capture & Sensor Ingestion</span>
-            </div>
-            <span class="pipeline-node-spec">Hardware Camera / Canvas</span>
-          </div>
-
-          <div class="pipeline-node" style="border-left: 3px solid var(--color-primary);">
-            <div class="pipeline-node-name">
-              <span>🔬 Layer 1: Normalized Error Level Analysis (N-ELA)</span>
-            </div>
-            <span class="pipeline-node-spec">82% JPEG Recompression Δ</span>
-          </div>
-
-          <div class="pipeline-node" style="border-left: 3px solid var(--color-primary);">
-            <div class="pipeline-node-name">
-              <span>📊 Layer 2: High-Pass Laplacian Noise Variance</span>
-            </div>
-            <span class="pipeline-node-spec">3x3 Discrete 2nd Derivative</span>
-          </div>
-
-          <div class="pipeline-node" style="border-left: 3px solid var(--color-primary);">
-            <div class="pipeline-node-name">
-              <span>📋 Layer 3: Normalized Cross-Correlation Copy-Move</span>
-            </div>
-            <span class="pipeline-node-spec">NCC Matrix Matching ≥ 0.94</span>
-          </div>
-
-          <div class="pipeline-node" style="border-left: 3px solid var(--color-primary);">
-            <div class="pipeline-node-name">
-              <span>📏 Layer 4: Typographical Baseline Alignment Jitter</span>
-            </div>
-            <span class="pipeline-node-spec">Vertical Drift Δy ≥ 4px</span>
-          </div>
-
-          <div class="pipeline-node" style="border-left: 3px solid var(--color-primary);">
-            <div class="pipeline-node-name">
-              <span>🔢 Layer 5: Financial Arithmetic & Date Chronology</span>
-            </div>
-            <span class="pipeline-node-spec">Balance & Timestamp Sanity</span>
-          </div>
-
-          <div class="pipeline-node">
-            <div class="pipeline-node-name">
-              <span>⚖️ Evidence Fusion & Composite Risk Aggregator</span>
-            </div>
-            <span class="pipeline-node-spec">0 - 100 Calibrated Risk Score</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- LIVE FORENSIC ANALYSIS WORKSPACE -->
-    <section class="section" id="workspaceSection">
-      <div class="section-header">
-        <div class="section-tag">Live Engine Sandbox</div>
-        <h2 class="section-title">Inspect a financial document now.</h2>
-        <p class="section-desc">
-          Capture via mobile camera, upload an existing invoice/statement, or test our certified ground-truth benchmarks.
-        </p>
-      </div>
-
-      <div class="workspace-wrapper">
-        <!-- Role Switcher Bar (Mobile Scanner vs Laptop Auditor) -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-          <div style="display:flex; gap:8px;">
-            <button id="tabPhone" class="toggle-tab active">📱 iQOO Mobile Enclave</button>
-            <button id="tabLaptop" class="toggle-tab">💻 Laptop Auditor Terminal</button>
-          </div>
-
-          <!-- Voice Interaction Controls -->
-          <div style="display:flex; align-items:center; gap:10px;">
-            <button id="voiceMicBtn" class="mic-btn" title="Toggle hands-free voice commands" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border-medium); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8" y1="23" x2="16" y2="23"/>
-              </svg>
-            </button>
-            <span id="voiceStatusText" style="font-size:0.82rem; color:var(--text-secondary);">Voice: Idle</span>
-          </div>
-        </div>
-
-        <!-- Main Workspace Grid -->
-        <div class="workspace-grid">
-          <!-- Left Panel: Scanner & Document Canvas -->
-          <div>
-            <!-- Input Source Action Bar -->
-            <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
-              <button id="cameraBtn" class="btn-primary" type="button" style="padding:10px 18px; font-size:0.85rem;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-                <span id="cameraBtnText">Open Camera</span>
-              </button>
-              <input type="file" id="cameraNativeInput" accept="image/*" capture="environment" style="display:none">
-
-              <button id="uploadBtn" class="btn-secondary" type="button" style="padding:10px 18px; font-size:0.85rem;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-                <span>Import Image</span>
-              </button>
-              <input type="file" id="fileInput" accept="image/*" style="display:none">
-
-              <button id="runAnalysisBtn" class="btn-secondary" type="button" style="padding:10px 18px; font-size:0.85rem; border-color:var(--color-primary); color:var(--color-primary);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="5 3 19 12 5 21 5 3"/>
-                </svg>
-                <span>Run Forensics</span>
-              </button>
-            </div>
-
-            <!-- Ground Truth Sample Picker -->
-            <div style="margin-bottom:12px;">
-              <span style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Select Certified Hackathon Benchmark:</span>
-              <div class="sample-buttons">
-                <button class="sample-btn active" data-sample="sample_1_authentic">
-                  <span class="name">1. Authentic Statement</span>
-                  <span style="color:var(--color-success)">Low Risk (2%)</span>
-                </button>
-                <button class="sample-btn" data-sample="sample_2_amount_forged">
-                  <span class="name">2. Altered Balance</span>
-                  <span style="color:var(--color-danger)">High Risk (83%)</span>
-                </button>
-                <button class="sample-btn" data-sample="sample_3_date_font_forged">
-                  <span class="name">3. Tampered Tax Date</span>
-                  <span style="color:var(--color-warning)">High Risk (75%)</span>
-                </button>
-                <button class="sample-btn" data-sample="sample_4_cloned_signature">
-                  <span class="name">4. Cloned Executive Seal</span>
-                  <span style="color:var(--color-danger)">High Risk (69%)</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Viewfinder & Canvas -->
-            <div class="viewfinder-wrapper" id="viewfinderWrapper">
-              <video id="cameraVideo" autoplay playsinline muted></video>
-              <div class="camera-guidelines" id="cameraGuidelines"></div>
-              <div class="scanner-beam" id="scannerBeam"></div>
-
-              <canvas id="documentCanvas"></canvas>
-              <div class="region-highlight-layer" id="regionLayer"></div>
-            </div>
-
-            <!-- Display Mode Controls -->
-            <div class="view-mode-bar">
-              <button id="viewNormalBtn" class="view-btn active">Original Visual</button>
-              <button id="viewElaBtn" class="view-btn">ELA Recompression Heatmap</button>
-            </div>
-          </div>
-
-          <!-- Right Panel: Forensic Assessment HUD -->
-          <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:20px; box-shadow:var(--shadow-md);">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
-              <div style="font-weight:700; font-size:0.92rem; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                </svg>
-                <span>Forensic Verdict</span>
-              </div>
-              <span id="latencyTag" style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted); background:var(--bg-subtle); padding:2px 8px; border-radius:4px;">
-                Edge: 72ms
-              </span>
-            </div>
-
-            <!-- Circular Risk Dial -->
-            <div class="risk-score-container">
-              <div class="score-dial">
-                <svg viewBox="0 0 140 140">
-                  <circle class="dial-bg" cx="70" cy="70" r="60"></circle>
-                  <circle class="dial-progress" id="dialProgress" cx="70" cy="70" r="60"></circle>
-                </svg>
-                <div class="score-number" id="riskScoreNumber">--</div>
-              </div>
-              <div class="risk-verdict-badge risk-low" id="riskVerdictBadge">READY TO SCAN</div>
-            </div>
-
-            <!-- 6 Forensic Checks List -->
-            <div class="forensic-signals-list" id="signalsList"></div>
-
-            <!-- Interactive Evidence Inspector Card -->
-            <div class="region-inspector" id="regionInspector">
-              <div class="inspector-header">
-                <span class="inspector-title" id="inspectorTitle">Flagged Anomaly</span>
-                <span id="inspectorConfidence" style="font-size:0.75rem; font-weight:700; color:var(--color-danger)">Confidence: 94%</span>
-              </div>
-              <p class="inspector-body" id="inspectorBody">
-                Tap any highlighted box on the document to view concrete forensic metrics.
-              </p>
-              <div class="inspector-math" id="inspectorMath">
-                N-ELA Ratio: 3.8x | Substrate Noise: +140%
-              </div>
-            </div>
-
-            <!-- WOW Feature: What Changed Card -->
-            <div class="what-changed-card" id="whatChangedCard">
-              <div style="font-weight:700; font-size:0.84rem; color:var(--text-primary); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
-                <span>What Changed? (Forensic Diff)</span>
-              </div>
-              <div id="diffRows"></div>
-            </div>
-
-            <!-- Actions: Voice Verdict, Office Kit Sync, Export Report -->
-            <div style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
-              <div style="display:flex; gap:8px;">
-                <button id="listenVerdictBtn" class="btn-secondary" style="flex:1; padding:9px 12px; font-size:0.8rem; justify-content:center;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                  </svg>
-                  <span>Listen to Verdict</span>
-                </button>
-
-                <button id="syncOfficeKitBtn" class="btn-secondary" style="flex:1; padding:9px 12px; font-size:0.8rem; justify-content:center;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                  </svg>
-                  <span>Sync to Laptop</span>
-                </button>
-              </div>
-
-              <button id="exportReportBtn" class="btn-primary" style="padding:10px 14px; font-size:0.84rem; justify-content:center;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
-                </svg>
-                <span>Export Verification Report</span>
-              </button>
-            </div>
-
-            <!-- Laptop Terminal Stream Box -->
-            <div id="auditorWorkstationPanel" style="display:none; margin-top:16px;">
-              <div style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">
-                Dual-Screen Auditor Event Stream (Laptop Terminal):
-              </div>
-              <div class="auditor-stream-box" id="auditorStreamBox" style="background:#f8fafc; border:1px solid var(--border-subtle); border-radius:6px; padding:10px; max-height:160px; overflow-y:auto; font-family:var(--font-mono); font-size:0.74rem;">
-                <div class="log-entry"><span class="log-time">[STANDBY]</span> Waiting for iQOO Phone Scanner to dispatch telemetry...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: Privacy Center & Responsible AI -->
-    <section class="section" id="privacy">
-      <div class="section-header">
-        <div class="section-tag">Trust & Compliance</div>
-        <h2 class="section-title">Built for sensitive financial records.</h2>
-        <p class="section-desc">
-          Banks, NBFCs, and fintechs face strict legal boundaries. AegisDoc is architected around absolute zero-knowledge on-device execution.
-        </p>
-      </div>
-
-      <div style="display:grid; grid-template-columns:1fr; gap:24px; max-width:960px; margin:0 auto;">
-        <div style="background:#ffffff; border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm);">
-          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:12px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            <span>What this system can — and cannot — prove.</span>
-          </h3>
-          <p style="font-size:0.86rem; color:var(--text-secondary); line-height:1.6; margin-bottom:12px;">
-            <strong>Responsible AI Disclosure:</strong> AegisDoc calculates a probabilistic <em>Forgery Risk Score</em> based on mathematical signals (compression artifacts, high-pass noise variance, and baseline drift). A high risk score indicates strong forensic anomalies requiring human compliance review, not an automated criminal conviction.
-          </p>
-          <ul style="font-size:0.82rem; color:var(--text-muted); line-height:1.6; padding-left:20px;">
-            <li>Zero financial document bytes are uploaded to remote servers.</li>
-            <li>Runs in 100% Airplane Mode without an active internet connection.</li>
-            <li>Supports compliance workflows across banking KYC, digital lending, and statutory auditing.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Final CTA Section -->
-    <section class="section" style="text-align:center; padding:60px 0;">
-      <h2 class="section-title" style="margin-bottom:16px;">Don't trust appearances. Verify the evidence.</h2>
-      <p class="section-desc" style="margin:0 auto 28px;">
-        Test our on-device document forensics on your smartphone right now.
-      </p>
-      <a href="#workspaceSection" class="btn-primary" style="padding:14px 28px; font-size:1rem;">
-        <span>Scan a Document Now</span>
-      </a>
-    </section>
+    </div>
   </main>
 
-  <!-- Office Kit Pairing Modal -->
-  <div class="modal-backdrop" id="bridgeModal">
-    <div style="background:#ffffff; border:1px solid var(--border-medium); border-radius:var(--radius-xl); padding:28px; max-width:440px; width:100%; box-shadow:var(--shadow-xl);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary);">Office Kit Bridge</h3>
-        <button id="closeBridgeModalBtn" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.2rem;">✕</button>
-      </div>
-      <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:16px;">
-        Pair your iQOO phone with your laptop workstation. Telemetry and bounding boxes sync in real time over local WebSocket.
-      </p>
-
-      <div style="background:var(--bg-subtle); border:1px dashed var(--border-medium); border-radius:var(--radius-md); padding:16px; text-align:center; margin-bottom:16px;">
-        <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">SESSION PAIRING PIN</div>
-        <div id="pairPinDisplay" style="font-family:var(--font-mono); font-size:1.8rem; font-weight:900; color:var(--color-primary); letter-spacing:0.15em;">IQOO-2026</div>
+  <!-- ========================================================================
+       PAGE VIEW 2 — HOW IT WORKS: EDITORIAL STORYTELLING
+       ======================================================================== -->
+  <section id="view-how-it-works" class="page-view view-editorial-story">
+    <div class="view-container">
+      <div class="story-header">
+        <span class="editorial-kicker">Sequential Methodology</span>
+        <h2 style="font-size:2.5rem; font-weight:900; letter-spacing:-0.03em; color:#0f172a; margin-bottom:12px;">Four Steps to Irrefutable Truth</h2>
+        <p style="color:#64748b; max-width:600px; margin:0 auto;">
+          From hardware sensor ingestion to calibrated mathematical proof without a single pixel leaving your device.
+        </p>
       </div>
 
-      <div style="display:flex; gap:8px;">
-        <input type="text" id="customRoomInput" placeholder="Room ID" value="IQOO-2026" style="flex:1; padding:8px 12px; border:1px solid var(--border-medium); border-radius:6px; font-family:var(--font-mono);">
-        <button id="joinRoomBtn" class="btn-primary" style="padding:8px 16px;">Connect</button>
-      </div>
-      <div style="margin-top:12px; font-size:0.75rem; color:var(--text-muted);">
-        Status: <span id="modalBridgeStatus" style="color:var(--color-primary); font-weight:700;">Ready</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Verification Audit Certificate Modal -->
-  <div class="modal-backdrop" id="reportModal">
-    <div class="report-modal-content">
-      <div style="display:flex; justify-content:flex-end;">
-        <button id="closeReportModalBtn" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.4rem;">✕</button>
-      </div>
-      <div class="cert-header">
-        <div class="cert-seal">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M9 12l2 2 4-4"/>
-          </svg>
-        </div>
-        <h2 style="font-size:1.3rem; font-weight:800; color:var(--text-primary); letter-spacing:-0.02em;">FORENSIC VERIFICATION REPORT</h2>
-        <div style="font-size:0.78rem; color:var(--text-muted);">CERTIFIED ON-DEVICE DOCUMENT INTEGRITY ATTESTATION</div>
-      </div>
-
-      <div id="certBody">
-        <div class="cert-row"><span class="label">Document ID</span><span class="val" id="certDocId">DOC-77491-AEGIS</span></div>
-        <div class="cert-row"><span class="label">Scan Timestamp</span><span class="val" id="certTimestamp">13-SEP-2026 10:50:00 UTC</span></div>
-        <div class="cert-row"><span class="label">Execution Mode</span><span class="val" style="color:var(--color-success)">100% On-Device Enclave</span></div>
-        <div class="cert-row"><span class="label">Inference Latency</span><span class="val" id="certLatency">72ms</span></div>
-        <div class="cert-row"><span class="label">Composite Forgery Risk</span><span class="val" id="certRiskScore" style="color:var(--color-danger); font-size:1.1rem;">82 / 100 (HIGH RISK)</span></div>
-        <div class="cert-row"><span class="label">Flagged Anomalies</span><span class="val" id="certAnomaliesCount">2 Regions Flagged</span></div>
-        
-        <div style="margin-top:16px; padding:12px; background:var(--bg-subtle); border-radius:var(--radius-md); font-size:0.8rem; color:var(--text-secondary); line-height:1.5;" id="certRationaleText">
-          Primary Finding: Error Level Analysis recompression delta exceeds ambient baseline by 3.8x, indicating spliced monetary balance.
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; margin-top:24px;">
-        <button onclick="window.print()" class="btn-secondary" style="padding:8px 16px; font-size:0.84rem;">
-          🖨️ Print / Save PDF
-        </button>
-        <button id="closeReportBtn2" class="btn-primary" style="padding:8px 16px; font-size:0.84rem;">
-          Close Certificate
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div id="verdictToast" class="verdict-toast" style="display:none;"></div>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
+      <!-- Chapter 1: Ingest -->
+      <div class="story-chapter">
         <div>
-          <div class="footer-brand">AegisDoc</div>
-          <p style="max-width:320px; line-height:1.5;">
-            On-device forensic verification for financial documents. Protecting sensitive banking PII while detecting sophisticated digital tampering.
+          <div class="story-num">STAGE 01 / INGESTION</div>
+          <h3 class="story-title">High-Resolution Sensor Ingestion</h3>
+          <p class="story-desc">
+            The document is captured via the iQOO camera sensor or imported locally from PDF/image storage. The image frame buffer is placed in volatile WebAssembly memory with zero disk caching and zero cloud connectivity.
           </p>
         </div>
-        <div>
-          <div style="font-weight:700; color:var(--text-primary); margin-bottom:10px;">Technology</div>
-          <div class="footer-links">
-            <a href="#technology">Normalized ELA</a>
-            <a href="#technology">Laplacian Noise</a>
-            <a href="#technology">Copy-Move Matcher</a>
-            <a href="#technology">Baseline Forensics</a>
-          </div>
-        </div>
-        <div>
-          <div style="font-weight:700; color:var(--text-primary); margin-bottom:10px;">Hackathon</div>
-          <div class="footer-links">
-            <a href="#">iQOO Hackathon 2026</a>
-            <a href="#privacy">Privacy & Trust</a>
-            <a href="#workspaceSection">Live Demo</a>
+        <div class="story-media-box">
+          <div style="font-weight:700; color:var(--brand-blue); margin-bottom:6px;">Camera Ingestion Buffer:</div>
+          <div style="font-family:var(--font-mono); font-size:0.8rem; color:#475569;">
+            Resolution: 1920 × 1080 RGBA<br>
+            Colorspace: sRGB 8-bit per channel<br>
+            Network Status: 100% Offline (Airplane Mode)
           </div>
         </div>
       </div>
-      <div style="border-top:1px solid var(--border-subtle); padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <span>© 2026 AegisDoc. Built for the iQOO Hackathon.</span>
-        <span>100% On-Device · Zero Cloud Data Leakage</span>
+
+      <!-- Chapter 2: Decompose -->
+      <div class="story-chapter">
+        <div>
+          <div class="story-num">STAGE 02 / DECOMPOSITION</div>
+          <h3 class="story-title">6-Layer Mathematical Decomposition</h3>
+          <p class="story-desc">
+            Rather than relying on unexplainable LLM hallucinations, AegisDoc computes orthogonal mathematical signals: Error Level Analysis recompression residuals, discrete 2nd derivative Laplacian noise variance, and spatial cross-correlation.
+          </p>
+        </div>
+        <div class="story-media-box">
+          <div style="font-weight:700; color:var(--brand-blue); margin-bottom:6px;">Parallel Vector Kernels:</div>
+          <div style="font-family:var(--font-mono); font-size:0.8rem; color:#475569;">
+            L1: N-ELA 82% Quantization Matrix<br>
+            L2: Laplacian [0, 1, 0; 1, -4, 1; 0, 1, 0]<br>
+            L3: NCC Normalized Cross-Correlation ≥ 0.94
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 3: Localize -->
+      <div class="story-chapter">
+        <div>
+          <div class="story-num">STAGE 03 / LOCALIZATION</div>
+          <h3 class="story-title">Pixel-Level Anomaly Bounding</h3>
+          <p class="story-desc">
+            Statistical outliers exceeding calibrated significance thresholds are grouped into localized bounding coordinates, allowing auditors to visually inspect exact tampered digits and foreign typography.
+          </p>
+        </div>
+        <div class="story-media-box">
+          <div style="font-weight:700; color:var(--color-danger); margin-bottom:6px;">Flagged Region #1:</div>
+          <div style="font-family:var(--font-mono); font-size:0.8rem; color:#475569;">
+            Bounding Box: [x:465, y:492, w:115, h:32]<br>
+            Anomaly: Spliced Closing Balance Digit<br>
+            Confidence: 94% (High Severity)
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 4: Explain -->
+      <div class="story-chapter">
+        <div>
+          <div class="story-num">STAGE 04 / EXPLANATION</div>
+          <h3 class="story-title">Executive Narration & Attestation</h3>
+          <p class="story-desc">
+            The results are synthesized into an audible executive audio verdict via on-device Web Speech, synchronized to auditor laptop terminals via Office Kit, and formatted into exportable compliance certificates.
+          </p>
+        </div>
+        <div class="story-media-box">
+          <div style="font-weight:700; color:var(--color-success); margin-bottom:6px;">Audit Deliverable:</div>
+          <div style="font-family:var(--font-mono); font-size:0.8rem; color:#475569;">
+            Output: Certified Verification Certificate<br>
+            Audio Verdict: "High Forgery Risk. Discrepancy in closing balance."<br>
+            Office Kit Telemetry: Synchronized in real time
+          </div>
+        </div>
       </div>
     </div>
-  </footer>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 3 — LIVE DEMO: CONTROL ROOM
+       ======================================================================== -->
+  <section id="view-control-room" class="page-view view-control-room">
+    <div class="view-container">
+      <div class="control-header">
+        <div>
+          <h2 style="font-size:1.4rem; font-weight:800; letter-spacing:-0.02em;">COMMAND CENTER // LIVE FORENSIC TELEMETRY</h2>
+          <div style="font-size:0.76rem; color:#94a3b8; font-family:var(--font-mono);">ENCLAVE SENSOR: ACTIVE · ZERO SERVER ROUNDTRIPS</div>
+        </div>
+        <div class="control-live-tag">
+          <span class="control-live-dot"></span>
+          <span id="latencyTag">LATENCY: 72ms</span>
+        </div>
+      </div>
+
+      <!-- Pipeline Stepper -->
+      <div class="pipeline-stepper" id="pipelineStepper">
+        <div class="pipe-step done">01 / INGESTED</div>
+        <div class="pipe-step done">02 / PREPROCESSING</div>
+        <div class="pipe-step done">03 / 6-LAYER FORENSICS</div>
+        <div class="pipe-step done">04 / RISK ENGINE</div>
+        <div class="pipe-step done">05 / VERDICT DISPATCH</div>
+      </div>
+
+      <!-- Control Grid -->
+      <div class="control-grid">
+        <!-- Left: Viewfinder & Workbench -->
+        <div class="control-panel-dark">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:#38bdf8;">DOCUMENT SENSOR STREAM</span>
+            <div style="display:flex; gap:8px;">
+              <button id="cameraBtn" class="btn-primary" style="padding:6px 12px; font-size:0.76rem;">
+                <span id="cameraBtnText">Open Camera</span>
+              </button>
+              <button id="uploadBtn" class="btn-secondary" style="padding:6px 12px; font-size:0.76rem; background:#1e293b; color:#f1f5f9; border-color:#334155;">
+                Upload File
+              </button>
+              <input type="file" id="fileInput" accept="image/*,.pdf" style="display:none;">
+              <input type="file" id="cameraNativeInput" accept="image/*" capture="environment" style="display:none;">
+            </div>
+          </div>
+
+          <!-- Sample Benchmark Selector -->
+          <div style="margin-bottom:12px;">
+            <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:6px; font-family:var(--font-mono);">PRESET HACKATHON BENCHMARKS:</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="sample-btn active btn-dark" data-sample="sample_1_authentic" style="padding:6px 10px; font-size:0.74rem;">
+                1. Authentic Statement (2%)
+              </button>
+              <button class="sample-btn btn-dark" data-sample="sample_2_amount_forged" style="padding:6px 10px; font-size:0.74rem;">
+                2. Spliced Balance (83%)
+              </button>
+              <button class="sample-btn btn-dark" data-sample="sample_3_date_font_forged" style="padding:6px 10px; font-size:0.74rem;">
+                3. Tampered Tax Date (75%)
+              </button>
+              <button class="sample-btn btn-dark" data-sample="sample_4_cloned_signature" style="padding:6px 10px; font-size:0.74rem;">
+                4. Cloned Seal Stamp (69%)
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas / Video Viewport -->
+          <div style="position:relative; width:100%; border:1px solid #334155; border-radius:var(--radius-md); overflow:hidden; background:#000;">
+            <video id="cameraVideo" autoplay playsinline muted style="width:100%; display:none;"></video>
+            <div id="cameraGuidelines" style="display:none; position:absolute; top:20px; left:20px; right:20px; bottom:20px; border:2px dashed #38bdf8; pointer-events:none;"></div>
+            <canvas id="documentCanvas" style="width:100%; display:block;"></canvas>
+            <div id="regionLayer" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:auto;"></div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+            <button id="runAnalysisBtn" class="btn-primary" style="padding:8px 18px; font-size:0.82rem;">
+              <span>Run Forensics</span>
+            </button>
+            <div style="display:flex; gap:8px;">
+              <button id="viewNormalBtn" class="btn-dark" style="padding:6px 12px; font-size:0.75rem;">Original</button>
+              <button id="viewElaBtn" class="btn-dark" style="padding:6px 12px; font-size:0.75rem;">ELA Heatmap</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Telemetry & Terminal -->
+        <div class="control-panel-dark" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:#38bdf8; margin-bottom:14px;">
+              COMPOSITE FORGERY RISK
+            </div>
+
+            <!-- Risk Dial & Verdict -->
+            <div style="text-align:center; padding:16px 0;">
+              <div style="font-size:3.5rem; font-weight:900; color:var(--color-danger); line-height:1; font-family:var(--font-mono);" id="riskScoreNumber">
+                83%
+              </div>
+              <div id="riskVerdictBadge" style="display:inline-block; font-size:0.82rem; font-weight:800; padding:4px 12px; border-radius:var(--radius-full); margin-top:8px; background:rgba(220, 38, 38, 0.2); color:#f87171; border:1px solid #ef4444;">
+                HIGH FORGERY RISK
+              </div>
+            </div>
+
+            <!-- 6 Signal List -->
+            <div id="signalsList" style="margin-top:16px; display:flex; flex-direction:column; gap:6px;">
+              <!-- Populated dynamically by app.js -->
+            </div>
+          </div>
+
+          <!-- Terminal Stream & Actions -->
+          <div style="margin-top:20px;">
+            <div style="font-size:0.72rem; color:#94a3b8; font-family:var(--font-mono); margin-bottom:6px;">
+              OFFICE KIT TERMINAL AUDITOR STREAM:
+            </div>
+            <div class="terminal-stream" id="auditorStreamBox">
+              <div class="terminal-entry"><span class="terminal-time">[11:15:02]</span> System initialized on 100% On-Device Enclave.</div>
+              <div class="terminal-entry"><span class="terminal-time">[11:15:03]</span> Waiting for document sensor ingestion...</div>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:14px;">
+              <button id="listenVerdictBtn" class="btn-dark" style="flex:1; justify-content:center; padding:8px 12px; font-size:0.78rem;">
+                🔊 Listen Verdict
+              </button>
+              <button id="syncOfficeKitBtn" class="btn-dark" style="flex:1; justify-content:center; padding:8px 12px; font-size:0.78rem;">
+                ⚡ Sync to Laptop
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 4 — FORENSIC ANALYSIS: DIGITAL FORENSICS LAB
+       ======================================================================== -->
+  <section id="view-forensics" class="page-view view-forensic-lab">
+    <div class="view-container">
+      <div class="lab-toolbar">
+        <div>
+          <h2 style="font-size:1.2rem; font-weight:800; letter-spacing:-0.01em;">DIGITAL FORENSICS WORKBENCH</h2>
+          <div style="font-size:0.72rem; color:#94a3b8; font-family:var(--font-mono);">MULTI-SPECTRUM COMPRESSION & NOISE RESIDUALS</div>
+        </div>
+
+        <div class="lab-mode-tabs">
+          <button class="lab-tab active" id="labModeOriginal">ORIGINAL</button>
+          <button class="lab-tab" id="labModeAnalysis">ANALYSIS</button>
+          <button class="lab-tab" id="labModeHeatmap">HEATMAP</button>
+          <button class="lab-tab" id="labModeEvidence">EVIDENCE</button>
+        </div>
+      </div>
+
+      <div class="lab-stage-container">
+        <div class="lab-canvas-wrap">
+          <canvas id="labCanvas"></canvas>
+          <div id="labRegionLayer" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div>
+        </div>
+      </div>
+
+      <!-- Inspector Detail Card -->
+      <div class="control-panel-dark" style="max-width:820px; margin:20px auto 0 auto;" id="regionInspector">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span id="inspectorTitle" style="font-weight:700; color:#38bdf8; font-size:0.9rem;">Anomaly Inspector</span>
+          <span id="inspectorConfidence" style="font-family:var(--font-mono); font-size:0.76rem; color:#f87171;">Confidence: 94%</span>
+        </div>
+        <p id="inspectorBody" style="font-size:0.84rem; color:#94a3b8; line-height:1.5;">
+          Tap any highlighted region on the canvas above to inspect mathematical tolerances.
+        </p>
+        <div id="inspectorMath" style="margin-top:10px; font-family:var(--font-mono); font-size:0.74rem; color:#64748b; background:#040711; padding:8px 12px; border-radius:var(--radius-xs);">
+          N-ELA: 3.8x Ratio | Noise Discontinuity: +140%
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 5 — RESULTS: PREMIUM FINANCIAL REPORT
+       ======================================================================== -->
+  <section id="view-results" class="page-view view-financial-report">
+    <div class="view-container">
+      <div class="report-paper-card" id="printableReport">
+        <div class="report-watermark">ATTESTED</div>
+
+        <div class="report-header-seal">
+          <div>
+            <div class="report-institution">CERTIFIED ON-DEVICE FORENSIC AUDIT</div>
+            <div style="font-size:0.75rem; color:#64748b; font-family:var(--font-mono);">
+              STANDALONE SECURE ENCLAVE INTEGRITY ATTESTATION
+            </div>
+          </div>
+          <button onclick="window.print()" class="btn-secondary" style="padding:6px 14px; font-size:0.78rem;">
+            🖨️ Print / Save PDF
+          </button>
+        </div>
+
+        <div class="report-meta-grid">
+          <div class="report-meta-row">
+            <span style="color:#64748b;">Document ID</span>
+            <strong id="repDocId" style="font-family:var(--font-mono);">DOC-9182-AEGIS</strong>
+          </div>
+          <div class="report-meta-row">
+            <span style="color:#64748b;">Execution Mode</span>
+            <strong style="color:var(--color-success);">100% On-Device Enclave</strong>
+          </div>
+          <div class="report-meta-row">
+            <span style="color:#64748b;">Scan Timestamp</span>
+            <strong id="repTimestamp" style="font-family:var(--font-mono);">13-SEP-2026 11:15:00 UTC</strong>
+          </div>
+          <div class="report-meta-row">
+            <span style="color:#64748b;">Inference Latency</span>
+            <strong id="repLatency" style="font-family:var(--font-mono);">72ms</strong>
+          </div>
+        </div>
+
+        <div class="report-score-banner">
+          <div>
+            <div style="font-size:0.75rem; font-weight:700; color:#64748b; text-transform:uppercase;">Composite Forgery Risk Index</div>
+            <div style="font-size:1.8rem; font-weight:900; color:var(--color-danger);" id="repScoreText">83 / 100</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:800; color:var(--color-danger);" id="repRiskLevel">HIGH FORGERY RISK</div>
+            <div style="font-size:0.75rem; color:#64748b;">Human Compliance Review Required</div>
+          </div>
+        </div>
+
+        <!-- Evidence Summary Table -->
+        <h4 style="font-size:0.88rem; font-weight:800; color:#0f172a; margin-bottom:12px; text-transform:uppercase;">
+          Forensic Evidence Signals
+        </h4>
+        <div id="repEvidenceList" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div style="margin-top:28px; padding:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:var(--radius-sm); font-size:0.78rem; color:#64748b; line-height:1.5;">
+          <strong>Cryptographic Non-Repudiation:</strong> This assessment was performed exclusively within client-side memory using multi-spectrum signal correlation. Raw document bytes were not transmitted outside the host device.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 6 — RISK EXPLORER: DATA VISUALIZATION
+       ======================================================================== -->
+  <section id="view-risk-explorer" class="page-view view-risk-explorer">
+    <div class="view-container">
+      <div style="text-align:center; margin-bottom:32px;">
+        <span class="editorial-kicker">Multi-Signal Weight Engine</span>
+        <h2 style="font-size:2.2rem; font-weight:900; letter-spacing:-0.03em;">Risk Score Breakdown</h2>
+        <p style="color:#64748b; max-width:600px; margin:0 auto;">
+          Click on any signal below to examine what it detects, why it matters, and its exact contribution to the overall forgery rating.
+        </p>
+      </div>
+
+      <div class="signals-viz-grid" id="riskExplorerCards">
+        <!-- Error Level Analysis -->
+        <div class="signal-viz-card" data-signal="ela">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Normalized Error Level Analysis (N-ELA)</strong>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:var(--color-danger);">Weight: 25%</span>
+          </div>
+          <div class="viz-bar-track">
+            <div class="viz-bar-fill" style="width:85%; background:var(--color-danger);"></div>
+          </div>
+          <div style="font-size:0.78rem; color:#64748b;">
+            Detects compression delta anomalies in 8x8 DCT resampled blocks.
+          </div>
+        </div>
+
+        <!-- Laplacian Noise Variance -->
+        <div class="signal-viz-card" data-signal="noise">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>High-Pass Noise Discontinuity</strong>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:var(--color-danger);">Weight: 20%</span>
+          </div>
+          <div class="viz-bar-track">
+            <div class="viz-bar-fill" style="width:78%; background:var(--color-danger);"></div>
+          </div>
+          <div style="font-size:0.78rem; color:#64748b;">
+            Computes 3x3 discrete 2nd derivative to detect spliced resolution mismatches.
+          </div>
+        </div>
+
+        <!-- Copy Move Matcher -->
+        <div class="signal-viz-card" data-signal="copymove">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Normalized Cross-Correlation Copy-Move</strong>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:#059669;">Weight: 20%</span>
+          </div>
+          <div class="viz-bar-track">
+            <div class="viz-bar-fill" style="width:20%; background:#059669;"></div>
+          </div>
+          <div style="font-size:0.78rem; color:#64748b;">
+            Locates duplicated graphic seals and replicated signatures across coordinates.
+          </div>
+        </div>
+
+        <!-- Typography Baseline Drift -->
+        <div class="signal-viz-card" data-signal="baseline">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Typographical Baseline Alignment</strong>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:#059669;">Weight: 15%</span>
+          </div>
+          <div class="viz-bar-track">
+            <div class="viz-bar-fill" style="width:35%; background:#059669;"></div>
+          </div>
+          <div style="font-size:0.78rem; color:#64748b;">
+            Detects vertical baseline drift (Δy ≥ 4px) caused by pasted foreign fonts.
+          </div>
+        </div>
+
+        <!-- Financial Ledger Checksum -->
+        <div class="signal-viz-card" data-signal="ledger">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Ledger Arithmetic & Checksums</strong>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:var(--color-danger);">Weight: 10%</span>
+          </div>
+          <div class="viz-bar-track">
+            <div class="viz-bar-fill" style="width:90%; background:var(--color-danger);"></div>
+          </div>
+          <div style="font-size:0.78rem; color:#64748b;">
+            Validates Opening Balance + Credits - Debits = Closing Balance.
+          </div>
+        </div>
+      </div>
+
+      <!-- Explainer Card (Updates on Click) -->
+      <div id="signalExplainerCard" style="max-width:720px; margin:30px auto; background:#ffffff; border:1px solid #cbd5e1; border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-md);">
+        <h3 id="explainerTitle" style="font-size:1.1rem; font-weight:800; color:var(--brand-blue); margin-bottom:10px;">
+          Select a signal above
+        </h3>
+        <p id="explainerBody" style="font-size:0.86rem; color:#475569; line-height:1.6;">
+          Tap any forensic signal to view its theoretical rationale and score contribution.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 7 — DOCUMENT COMPARISON: SPLIT-SCREEN INVESTIGATION
+       ======================================================================== -->
+  <section id="view-comparison" class="page-view view-comparison">
+    <div class="view-container">
+      <div style="text-align:center; margin-bottom:24px;">
+        <span class="editorial-kicker">Comparative Investigation Desk</span>
+        <h2 style="font-size:2.2rem; font-weight:900; letter-spacing:-0.03em;">Original vs. Spliced Forgery</h2>
+        <p style="color:#64748b; max-width:620px; margin:0 auto;">
+          Drag the interactive slider below. Notice how the forged digit '9' appears visually native to the human eye, yet exhibits dramatic compression discontinuity.
+        </p>
+      </div>
+
+      <div class="comparison-workbench" id="comparisonSlider">
+        <div class="comparison-wrapper">
+          <img src="samples/sample_2_amount_forged.png" alt="Manipulated Document" class="comp-img" id="sliderManipulated">
+          <img src="samples/sample_1_authentic.png" alt="Authentic Document" class="comp-img overlay" id="sliderAuthentic">
+          <div class="comp-handle" id="sliderHandle">
+            <div class="comp-handle-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6"></polyline>
+                <polyline points="9 18 3 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; padding:12px 20px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:0.8rem; font-weight:700;">
+          <span style="color:var(--color-success);">← Authentic Original (₹1,83,700.00)</span>
+          <span style="color:var(--color-danger);">Spliced Forgery (₹9,83,700.00) →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 8 — "WHAT CHANGED?": FORENSIC INVESTIGATION TIMELINE
+       ======================================================================== -->
+  <section id="view-what-changed" class="page-view view-what-changed">
+    <div class="view-container">
+      <div style="text-align:center; margin-bottom:30px;">
+        <span class="editorial-kicker">Discrepancy Audit Log</span>
+        <h2 style="font-size:2.2rem; font-weight:900; letter-spacing:-0.03em;">What Changed?</h2>
+        <p style="color:#64748b; max-width:600px; margin:0 auto;">
+          Vertical forensic chronology mapping exact field modifications against document baselines.
+        </p>
+      </div>
+
+      <div class="timeline-list">
+        <!-- Node 1: Amount -->
+        <div class="timeline-node">
+          <div class="timeline-step-num">01 / MONETARY LEDGER</div>
+          <h4 style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">Closing Balance Inflation</h4>
+          <div style="font-family:var(--font-mono); font-size:0.9rem; margin-bottom:8px;">
+            <span style="text-decoration:line-through; color:#94a3b8;">₹1,83,700.00</span>
+            <span style="color:var(--color-danger); font-weight:700; margin-left:8px;">→ ₹9,83,700.00</span>
+          </div>
+          <p style="font-size:0.82rem; color:#64748b;">
+            First digit '1' was replaced with '9' (+₹8,00,000 inflation). Flagged by N-ELA (3.8x compression error spike) and ledger arithmetic failure.
+          </p>
+        </div>
+
+        <!-- Node 2: Date -->
+        <div class="timeline-node">
+          <div class="timeline-step-num">02 / CHRONOLOGY SANITY</div>
+          <h4 style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">Validity Period Extension</h4>
+          <div style="font-family:var(--font-mono); font-size:0.9rem; margin-bottom:8px;">
+            <span style="text-decoration:line-through; color:#94a3b8;">31-DEC-2026</span>
+            <span style="color:var(--color-danger); font-weight:700; margin-left:8px;">→ 31-DEC-2028</span>
+          </div>
+          <p style="font-size:0.82rem; color:#64748b;">
+            Splice of '2028' using non-native font. Detected via 4.2px vertical baseline drift and typographical stroke mismatch.
+          </p>
+        </div>
+
+        <!-- Node 3: Stamp -->
+        <div class="timeline-node">
+          <div class="timeline-step-num">03 / AUTHORIZATION STAMP</div>
+          <h4 style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:6px;">Cloned Executive Stamp</h4>
+          <div style="font-family:var(--font-mono); font-size:0.9rem; margin-bottom:8px;">
+            <span style="color:#94a3b8;">Header Stamp</span>
+            <span style="color:var(--color-danger); font-weight:700; margin-left:8px;">→ Duplicated Approval Stamp</span>
+          </div>
+          <p style="font-size:0.82rem; color:#64748b;">
+            Cloned graphic detected via Normalized Cross-Correlation (NCC = 0.96) duplicated to fabricate secondary executive approval.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 9 — PRIVACY CENTER: CALM / MINIMAL
+       ======================================================================== -->
+  <section id="view-privacy" class="page-view view-calm-privacy">
+    <div class="view-container">
+      <div class="privacy-hero-card">
+        <span class="editorial-kicker">Absolute Zero-Knowledge Guarantee</span>
+        <h2 style="font-size:2.6rem; font-weight:900; letter-spacing:-0.03em; margin:12px 0 16px 0;">Your document. Your device.</h2>
+        <p style="color:#475569; font-size:1.05rem; line-height:1.6;">
+          Banking records contain sensitive personally identifiable information (PII). AegisDoc processes 100% of image pixels on your local device hardware without transmitting a single byte to external servers.
+        </p>
+
+        <div class="privacy-pipeline-chart">
+          <div class="privacy-node">📷 Camera Sensor</div>
+          <span style="color:#94a3b8;">→</span>
+          <div class="privacy-node">🔒 Local Enclave RAM</div>
+          <span style="color:#94a3b8;">→</span>
+          <div class="privacy-node">🔬 On-Device Forensics</div>
+          <span style="color:#94a3b8;">→</span>
+          <div class="privacy-node">⚖️ Local Verdict</div>
+        </div>
+
+        <div style="text-align:left; max-width:680px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
+          <div>
+            <h4 style="font-weight:800; font-size:1rem; margin-bottom:4px;">What stays on-device?</h4>
+            <p style="font-size:0.88rem; color:#64748b;">100% of raw document bytes, extracted pixel buffers, camera frames, and intermediate matrices.</p>
+          </div>
+          <div>
+            <h4 style="font-weight:800; font-size:1rem; margin-bottom:4px;">What leaves the device?</h4>
+            <p style="font-size:0.88rem; color:#64748b;">Zero image bytes. Only if you explicitly initiate Office Kit pairing, minimal telemetry coordinates and scores are streamed over your local private Wi-Fi.</p>
+          </div>
+          <div>
+            <h4 style="font-weight:800; font-size:1rem; margin-bottom:4px;">Is the document stored?</h4>
+            <p style="font-size:0.88rem; color:#64748b;">No. Pixels exist only in transient memory during computation and are purged on tab close.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 10 — TECHNOLOGY: ENGINEERING BLUEPRINT
+       ======================================================================== -->
+  <section id="view-technology" class="page-view view-engineering-blueprint">
+    <div class="view-container">
+      <div style="text-align:center; margin-bottom:32px;">
+        <span style="color:#60a5fa; font-family:var(--font-mono); font-size:0.8rem; font-weight:700;">SPECIFICATION // ARCHITECTURE</span>
+        <h2 style="font-size:2.4rem; font-weight:900; letter-spacing:-0.03em; color:#ffffff;">Engineering Blueprint</h2>
+        <p style="color:#94a3b8; max-width:620px; margin:0 auto;">
+          Rigorous mathematical formulation behind AegisDoc's orthogonal on-device forensic pipeline.
+        </p>
+      </div>
+
+      <div class="blueprint-schematic">
+        <div style="display:grid; grid-template-columns:1fr; gap:20px;">
+          <div style="border-left:3px solid #3b82f6; padding-left:16px;">
+            <div style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:#60a5fa;">
+              1. Normalized Error Level Analysis (N-ELA)
+            </div>
+            <div style="font-family:var(--font-mono); font-size:0.8rem; color:#94a3b8; margin-top:4px;">
+              Residual Formula: |I(x,y) - Q_82(I)| > 3.2 · μ_ambient across 8x8 DCT grid blocks.
+            </div>
+          </div>
+
+          <div style="border-left:3px solid #3b82f6; padding-left:16px;">
+            <div style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:#60a5fa;">
+              2. Discrete 2nd Derivative Laplacian Noise
+            </div>
+            <div style="font-family:var(--font-mono); font-size:0.8rem; color:#94a3b8; margin-top:4px;">
+              Filter Kernel: ∇²I = [0 1 0; 1 -4 1; 0 1 0] * I · Text-Masked Variance Thresholding.
+            </div>
+          </div>
+
+          <div style="border-left:3px solid #3b82f6; padding-left:16px;">
+            <div style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:#60a5fa;">
+              3. Spatial Normalized Cross-Correlation (Copy-Move)
+            </div>
+            <div style="font-family:var(--font-mono); font-size:0.8rem; color:#94a3b8; margin-top:4px;">
+              NCC(T,S) = ∑(T - μ_T)(S - μ_S) / (σ_T · σ_S) ≥ 0.94 for stamp and signature cloning.
+            </div>
+          </div>
+
+          <div style="border-left:3px solid #3b82f6; padding-left:16px;">
+            <div style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:#60a5fa;">
+              4. Evidence Fusion Weighted Aggregator
+            </div>
+            <div style="font-family:var(--font-mono); font-size:0.8rem; color:#94a3b8; margin-top:4px;">
+              Composite Score = ∑(w_i · S_i) with calibrated weights w = [0.25, 0.20, 0.20, 0.15, 0.10, 0.10].
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 11 — MOBILE SCANNER: CAMERA-FIRST
+       ======================================================================== -->
+  <section id="view-scanner" class="page-view view-camera-scanner">
+    <div class="view-container" style="text-align:center;">
+      <div style="padding:16px 0;">
+        <span style="font-family:var(--font-mono); font-size:0.75rem; color:#38bdf8;">MOBILE SCANNER INTERFACE</span>
+        <h2 style="font-size:1.8rem; font-weight:800;">Align Document Within Frame</h2>
+      </div>
+
+      <div class="scanner-viewport-box">
+        <div class="camera-reticle"></div>
+        <video id="scannerMobileVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
+        <div style="position:absolute; bottom:24px; left:0; right:0; display:flex; justify-content:center; gap:20px;">
+          <button id="scannerShutterBtn" style="width:64px; height:64px; border-radius:50%; background:#ffffff; border:4px solid var(--brand-blue); cursor:pointer; box-shadow:0 0 15px rgba(255,255,255,0.4);"></button>
+        </div>
+      </div>
+      <p style="font-size:0.8rem; color:#94a3b8; margin-top:12px;">Tap shutter to freeze frame and trigger on-device forensic inference.</p>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 12 — SCAN PROCESSING: CINEMATIC / FOCUSED
+       ======================================================================== -->
+  <section id="view-processing" class="page-view view-cinematic-processing">
+    <div class="processing-theater">
+      <div style="position:relative; width:220px; height:300px; margin:0 auto 30px auto; border:2px solid #334155; border-radius:var(--radius-md); overflow:hidden; background:#0f172a;">
+        <img src="samples/sample_2_amount_forged.png" alt="Scanning Document" style="width:100%; height:100%; object-fit:cover; opacity:0.6;">
+        <div style="position:absolute; top:0; left:0; right:0; height:3px; background:#38bdf8; box-shadow:0 0 12px #38bdf8; animation:heroScan 2s infinite alternate;"></div>
+      </div>
+
+      <h3 style="font-size:1.4rem; font-weight:800; margin-bottom:12px;">Executing On-Device Pipeline</h3>
+      <div style="font-family:var(--font-mono); font-size:0.84rem; color:#38bdf8;" id="procTicker">
+        [STAGE 03/05] Evaluating Laplacian Noise Substrate Continuity...
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 13 — HISTORY: CLEAN FINTECH LEDGER
+       ======================================================================== -->
+  <section id="view-history" class="page-view view-fintech-ledger">
+    <div class="view-container">
+      <div style="text-align:center; margin-bottom:30px;">
+        <span class="editorial-kicker">Audit Trail & Previous Sessions</span>
+        <h2 style="font-size:2.2rem; font-weight:900; letter-spacing:-0.03em;">Document Verification Ledger</h2>
+        <p style="color:#64748b; max-width:600px; margin:0 auto;">
+          Chronological record of certified client-side forensic audits executed on this device.
+        </p>
+      </div>
+
+      <table class="ledger-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Document Record</th>
+            <th>Latency</th>
+            <th>Forgery Risk</th>
+            <th>Attestation</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerTableBody">
+          <tr>
+            <td style="font-family:var(--font-mono);">13-SEP-2026 11:15</td>
+            <td><strong>Certified Account Statement</strong></td>
+            <td style="font-family:var(--font-mono);">72ms</td>
+            <td style="color:var(--color-danger); font-weight:700;">83% HIGH</td>
+            <td><a href="#results" class="btn-secondary" style="padding:4px 10px; font-size:0.72rem;">View Certificate</a></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--font-mono);">13-SEP-2026 10:45</td>
+            <td><strong>Authentic Salary Statement</strong></td>
+            <td style="font-family:var(--font-mono);">68ms</td>
+            <td style="color:var(--color-success); font-weight:700;">2% LOW</td>
+            <td><a href="#results" class="btn-secondary" style="padding:4px 10px; font-size:0.72rem;">View Certificate</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 14 — RESPONSIBLE AI: TRUST / TRANSPARENCY
+       ======================================================================== -->
+  <section id="view-responsible-ai" class="page-view view-responsible-ai">
+    <div class="view-container" style="max-width:800px;">
+      <div style="text-align:center; margin-bottom:32px;">
+        <span class="editorial-kicker">Ethics & Model Limitations</span>
+        <h2 style="font-size:2.2rem; font-weight:900; letter-spacing:-0.03em;">Responsible AI Disclosure</h2>
+      </div>
+
+      <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--radius-lg); padding:32px; box-shadow:var(--shadow-sm); line-height:1.6; color:#334155;">
+        <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:10px; color:#0f172a;">
+          Probabilistic Risk Score vs. Automated Conviction
+        </h3>
+        <p style="font-size:0.9rem; margin-bottom:16px;">
+          AegisDoc calculates a mathematical <strong>Forgery Risk Index</strong> based on compression artifacts, noise substrate continuity, and typographical alignment. A high risk score indicates compelling structural anomalies requiring human compliance review, rather than an automated conviction.
+        </p>
+        <h4 style="font-weight:700; margin-bottom:6px; color:#0f172a;">Core Commitments:</h4>
+        <ul style="padding-left:20px; font-size:0.86rem; color:#64748b;">
+          <li>Zero cloud transfer of confidential banking records.</li>
+          <li>Full mathematical explainability for every flagged pixel box.</li>
+          <li>Human-in-the-loop escalation pathways for dispute resolution.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 15 — ABOUT / IMPACT: STARTUP STORY
+       ======================================================================== -->
+  <section id="view-impact" class="page-view view-startup-story">
+    <div class="view-container" style="max-width:860px;">
+      <div style="text-align:center; margin-bottom:40px;">
+        <span class="editorial-kicker">Market Problem & Opportunity</span>
+        <h2 style="font-size:2.4rem; font-weight:900; letter-spacing:-0.03em;">The $40 Billion Forgery Crisis</h2>
+        <p style="color:#64748b; margin-top:8px;">
+          Financial digital tampering threatens modern banking, digital lending, and automated underwriting.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:24px;">
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:var(--radius-md); padding:24px;">
+          <h3 style="font-size:1.1rem; font-weight:800; color:var(--brand-blue); margin-bottom:8px;">1. The Problem</h3>
+          <p style="font-size:0.9rem; color:#475569; line-height:1.6;">
+            Photo-editing applications and generative tools make altering monetary digits, salary certificates, and loan approvals trivially easy. Existing verification methods require uploading sensitive financial PDFs to third-party cloud servers, violating strict privacy regulations like GDPR and RBI compliance directives.
+          </p>
+        </div>
+
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:var(--radius-md); padding:24px;">
+          <h3 style="font-size:1.1rem; font-weight:800; color:var(--brand-blue); margin-bottom:8px;">2. The AegisDoc Solution</h3>
+          <p style="font-size:0.9rem; color:#475569; line-height:1.6;">
+            A privacy-first, on-device digital forensics pipeline running inside mobile hardware memory. Detects spliced digits, cloned signatures, and typographical shifts in 72ms with zero cloud data transmission.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PAGE VIEW 16 — DEMO CHALLENGE: INTERACTIVE GAME
+       ======================================================================== -->
+  <section id="view-challenge" class="page-view view-interactive-game">
+    <div class="view-container">
+      <div style="text-align:center; margin-bottom:24px;">
+        <span class="editorial-kicker">Interactive Jury Challenge</span>
+        <h2 style="font-size:2.2rem; font-weight:900; letter-spacing:-0.03em;">Can You Spot the Forgery?</h2>
+        <p style="color:#64748b; max-width:600px; margin:0 auto;">
+          Test your human eyes against AegisDoc's on-device forensic engine. One of the documents below is 100% authentic; the other contains digital tampering.
+        </p>
+      </div>
+
+      <div class="challenge-duel-grid">
+        <div class="duel-card" id="challengeCardA">
+          <span style="display:inline-block; font-size:0.75rem; font-weight:700; background:#f1f5f9; padding:4px 10px; border-radius:var(--radius-full); margin-bottom:12px;">
+            DOCUMENT A
+          </span>
+          <img src="samples/sample_1_authentic.png" alt="Candidate A" style="width:100%; height:260px; object-fit:contain; border-radius:var(--radius-sm); margin-bottom:12px; background:#fafafa;">
+          <div style="font-weight:700;">Certified Account Statement</div>
+          <div style="font-size:0.8rem; color:#64748b;">Closing Balance: ₹1,83,700.00</div>
+        </div>
+
+        <div class="duel-card" id="challengeCardB">
+          <span style="display:inline-block; font-size:0.75rem; font-weight:700; background:#f1f5f9; padding:4px 10px; border-radius:var(--radius-full); margin-bottom:12px;">
+            DOCUMENT B
+          </span>
+          <img src="samples/sample_3_date_font_forged.png" alt="Candidate B" style="width:100%; height:260px; object-fit:contain; border-radius:var(--radius-sm); margin-bottom:12px; background:#fafafa;">
+          <div style="font-weight:700;">Salary & Incentive Certificate</div>
+          <div style="font-size:0.8rem; color:#64748b;">Bonus Period: 31-DEC-2028</div>
+        </div>
+      </div>
+
+      <!-- Challenge Reveal Banner -->
+      <div id="challengeResultBanner" style="max-width:720px; margin:20px auto; background:#ffffff; border:1px solid #cbd5e1; border-radius:var(--radius-md); padding:20px; text-align:center; display:none; box-shadow:var(--shadow-md);">
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       OFFICE KIT BRIDGE PAIRING MODAL
+       ======================================================================== -->
+  <div class="modal-backdrop" id="bridgeModal">
+    <div style="background:#ffffff; border-radius:var(--radius-lg); padding:28px; max-width:440px; width:100%; box-shadow:var(--shadow-xl);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-size:1.1rem; font-weight:800;">Office Kit Bridge Pairing</h3>
+        <button id="closeBridgeModalBtn" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:0.84rem; color:#64748b; line-height:1.5; margin-bottom:16px;">
+        Connect your phone scanner to your auditor laptop terminal over local private Wi-Fi with zero document image upload.
+      </p>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:0.75rem; font-weight:700; color:#475569;">Pairing PIN / Room ID:</label>
+        <input type="text" id="customRoomInput" value="IQOO-2026" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:var(--radius-sm); font-family:var(--font-mono); margin-top:4px;">
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span id="modalBridgeStatus" style="font-size:0.78rem; font-family:var(--font-mono); color:var(--brand-blue);">Ready to pair</span>
+        <button id="joinRoomBtn" class="btn-primary" style="padding:6px 14px; font-size:0.8rem;">Join Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="verdictToast" style="display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#0f172a; color:#ffffff; padding:10px 20px; border-radius:var(--radius-full); font-size:0.82rem; font-weight:600; box-shadow:var(--shadow-xl); z-index:999;"></div>
 
   <!-- Scripts -->
-  <script src="forensics.js?v=3.0.1"></script>
-  <script src="voice.js?v=3.0.1"></script>
-  <script src="bridge.js?v=3.0.1"></script>
-  <script src="app.js?v=3.0.1"></script>
+  <script src="forensics.js?v=3.1.0"></script>
+  <script src="voice.js?v=3.1.0"></script>
+  <script src="bridge.js?v=3.1.0"></script>
+  <script src="app.js?v=3.1.0"></script>
   <script>
-    // Invalidate stale Service Worker and cache storage for instant updates
+    // Service Worker live cache invalidation
     if ('caches' in window) {
       caches.keys().then((names) => {
         for (let name of names) {
-          if (name !== 'aegisdoc-v3.0.1') {
-            caches.delete(name);
-          }
+          if (name !== 'aegisdoc-v3.1.0') caches.delete(name);
         }
       });
     }
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=3.0.1')
-          .then((reg) => {
-            reg.update();
-          })
-          .catch((err) => console.log('SW register:', err));
+        navigator.serviceWorker.register('sw.js?v=3.1.0').then(r => r.update()).catch(e => console.log(e));
       });
     }
   </script>
