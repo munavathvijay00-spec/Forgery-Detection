@@ -133,7 +133,13 @@ def create_app():
     async def handle_root(req):
         return web.FileResponse(index_path)
 
+    async def handle_favicon(req):
+        return web.Response(status=204)
+
     app.router.add_get("/", handle_root)
+    app.router.add_get("/favicon.ico", handle_favicon)
+    app.router.add_get("/apple-touch-icon.png", handle_favicon)
+    app.router.add_get("/apple-touch-icon-precomposed.png", handle_favicon)
     app.router.add_static("/", client_dir, show_index=False)
     return app
 
