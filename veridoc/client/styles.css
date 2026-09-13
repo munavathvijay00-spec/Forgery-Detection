@@ -345,6 +345,100 @@ body {
   background: var(--color-primary);
 }
 
+/* Persistent Active Document State HUD */
+.active-doc-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  margin-top: 6px;
+}
+
+.doc-hud-items {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.doc-hud-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.doc-hud-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.doc-hud-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-hud-val.mono {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--color-primary);
+}
+
+.doc-hud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #065f46;
+  letter-spacing: 0.05em;
+}
+
+.hud-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.benchmark-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.benchmark-select {
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: #ffffff;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  outline: none;
+}
+.benchmark-select:focus {
+  border-color: var(--color-primary);
+}
+
 /* ==========================================================================
    Main Workspace Layout (Canvas + Risk HUD)
    ========================================================================== */
@@ -558,6 +652,11 @@ body {
 .operation-card.passed {
   border-color: var(--color-success-border);
   background: #f6fdf9;
+}
+.operation-card.selected-op {
+  border-width: 2px;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), var(--shadow-md);
 }
 
 .op-header {

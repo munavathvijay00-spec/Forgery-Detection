@@ -96,30 +96,71 @@
             <span id="cameraBtnText">Open Camera</span>
           </button>
           <input type="file" id="cameraNativeInput" accept="image/*" capture="environment" style="display:none;">
+
+          <div class="benchmark-select-wrapper">
+            <select id="benchmarkSelect" class="benchmark-select" title="Load Benchmark Case">
+              <option value="" disabled selected>📂 Load Benchmark Sample ▾</option>
+              <option value="sample_1_authentic">Sample 1: Authentic Statement</option>
+              <option value="sample_2_amount_forged">Sample 2: Spliced Amount (+₹8L)</option>
+              <option value="sample_3_date_font_forged">Sample 3: Tampered Expiry Date</option>
+              <option value="sample_4_cloned_signature">Sample 4: Cloned Executive Seal</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <!-- 4 Operation Selector Buttons -->
+      <!-- Persistent Active Document State HUD -->
+      <div class="active-doc-hud" id="activeDocHud">
+        <div class="doc-hud-items">
+          <div class="doc-hud-item">
+            <span class="doc-hud-label">Active Document</span>
+            <span class="doc-hud-val" id="hudDocName">sample_1_authentic.png</span>
+          </div>
+          <div class="doc-hud-item">
+            <span class="doc-hud-label">Document ID</span>
+            <span class="doc-hud-val mono" id="hudDocId">DOC-INIT</span>
+          </div>
+          <div class="doc-hud-item">
+            <span class="doc-hud-label">SHA-256 Fingerprint</span>
+            <span class="doc-hud-val mono" id="hudDocHash">Computing...</span>
+          </div>
+          <div class="doc-hud-item">
+            <span class="doc-hud-label">Dimensions</span>
+            <span class="doc-hud-val" id="hudDocDim">900 × 1200 px</span>
+          </div>
+        </div>
+        <div class="doc-hud-badge" id="hudDocStatus">
+          <span class="hud-status-dot"></span>
+          <span>IMAGE LOCKED IN STATE</span>
+        </div>
+      </div>
+
+      <!-- 4 Operation Selector Buttons (Decoupled from sample loading) -->
       <div>
-        <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">
-          Select Forensic Operation to Test:
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">
+            Select Forensic Operation to Evaluate:
+          </div>
+          <div style="font-size:0.72rem; color:var(--color-primary); font-weight:700;">
+            🔒 All 4 operations strictly evaluate the locked active document
+          </div>
         </div>
         <div class="operations-selector-row">
-          <button class="op-select-btn active" data-sample="sample_1_authentic" id="btnOp1">
+          <button class="op-select-btn active" data-op="1" id="btnOp1">
             <span class="op-select-dot"></span>
-            <span>1. Authentic Statement (Baseline)</span>
+            <span>Op 1: Substrate Noise & Authenticity</span>
           </button>
-          <button class="op-select-btn" data-sample="sample_2_amount_forged" id="btnOp2">
+          <button class="op-select-btn" data-op="2" id="btnOp2">
             <span class="op-select-dot"></span>
-            <span>2. Spliced Balance (Amount Tampering)</span>
+            <span>Op 2: Spliced Balance & Amounts</span>
           </button>
-          <button class="op-select-btn" data-sample="sample_3_date_font_forged" id="btnOp3">
+          <button class="op-select-btn" data-op="3" id="btnOp3">
             <span class="op-select-dot"></span>
-            <span>3. Tampered Date (Typography Drift)</span>
+            <span>Op 3: Tampered Date & Font Drift</span>
           </button>
-          <button class="op-select-btn" data-sample="sample_4_cloned_signature" id="btnOp4">
+          <button class="op-select-btn" data-op="4" id="btnOp4">
             <span class="op-select-dot"></span>
-            <span>4. Cloned Seal (Signature/Stamp NCC)</span>
+            <span>Op 4: Cloned Signature & Seal Matcher</span>
           </button>
         </div>
       </div>
