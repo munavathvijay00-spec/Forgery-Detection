@@ -568,6 +568,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (regionInspector) regionInspector.style.display = 'none';
   }
 
+  // Auto-rescale bounding boxes on mobile screen rotation / viewport resize
+  window.addEventListener('resize', () => {
+    if (state.analysisResults && state.activeDocument) {
+      focusOperationView(state.selectedOperation, state.analysisResults);
+    }
+  });
+
   // ========================================================================
   // FILE UPLOAD & CAMERA INGESTION HANDLERS
   // ========================================================================
