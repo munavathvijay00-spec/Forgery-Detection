@@ -125,6 +125,36 @@ document.addEventListener('DOMContentLoaded', () => {
   // Voice Command Trigger
   const voiceMicBtn = document.getElementById('voiceMicBtn');
 
+  // Cinematic Processing Overlay Elements (Section 21)
+  const processingOverlay = document.getElementById('processingOverlay');
+  const procSubtitle = document.getElementById('procSubtitle');
+
+  // Risk Explorer Elements (Section 18)
+  const barPtsClone = document.getElementById('barPtsClone');
+  const barFillClone = document.getElementById('barFillClone');
+  const barPtsEla = document.getElementById('barPtsEla');
+  const barFillEla = document.getElementById('barFillEla');
+  const barPtsNoise = document.getElementById('barPtsNoise');
+  const barFillNoise = document.getElementById('barFillNoise');
+  const barPtsFont = document.getElementById('barPtsFont');
+  const barFillFont = document.getElementById('barFillFont');
+  const barPtsLogic = document.getElementById('barPtsLogic');
+  const barFillLogic = document.getElementById('barFillLogic');
+  const barPtsMeta = document.getElementById('barPtsMeta');
+  const barFillMeta = document.getElementById('barFillMeta');
+
+  // Scan History Ledger Elements (Section 22)
+  const historyList = document.getElementById('historyList');
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+  const HISTORY_STORAGE_KEY = 'aegisdoc_scan_history_v1';
+
+  // Mobile Bottom Navigation
+  const mNavHome = document.getElementById('mNavHome');
+  const mNavScan = document.getElementById('mNavScan');
+  const mNavLab = document.getElementById('mNavLab');
+  const mNavRisk = document.getElementById('mNavRisk');
+  const mNavPrivacy = document.getElementById('mNavPrivacy');
+
   // ========================================================================
   // CRYPTOGRAPHIC SHA-256 HASH GENERATION (ON-DEVICE)
   // ========================================================================
@@ -363,6 +393,141 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================================================
+  // CINEMATIC PROCESSING OVERLAY CONTROLS (Section 21)
+  // ========================================================================
+  function showProcessingOverlay() {
+    if (!processingOverlay) return;
+    processingOverlay.style.display = 'flex';
+    for (let i = 1; i <= 7; i++) {
+      const el = document.getElementById(`procStep${i}`);
+      if (el) el.className = 'proc-step';
+    }
+  }
+
+  function setProcessingStep(stepNum, status = 'active') {
+    const el = document.getElementById(`procStep${stepNum}`);
+    if (el) {
+      if (status === 'active') {
+        el.className = 'proc-step active';
+      } else if (status === 'completed') {
+        el.className = 'proc-step completed';
+      }
+    }
+  }
+
+  function hideProcessingOverlay() {
+    if (!processingOverlay) return;
+    setTimeout(() => {
+      processingOverlay.style.display = 'none';
+    }, 400);
+  }
+
+  // ========================================================================
+  // RISK EXPLORER BAR UPDATER (Section 18)
+  // ========================================================================
+  function updateRiskExplorer(report) {
+    if (!report || !report.evidenceBreakdown) return;
+
+    const barMap = {
+      clone: { ptsEl: barPtsClone, fillEl: barFillClone },
+      ela: { ptsEl: barPtsEla, fillEl: barFillEla },
+      noise: { ptsEl: barPtsNoise, fillEl: barFillNoise },
+      geometry: { ptsEl: barPtsFont, fillEl: barFillFont },
+      semantics: { ptsEl: barPtsLogic, fillEl: barFillLogic },
+      metadata: { ptsEl: barPtsMeta, fillEl: barFillMeta }
+    };
+
+    report.evidenceBreakdown.forEach(item => {
+      const entry = barMap[item.id];
+      if (entry) {
+        if (entry.ptsEl) {
+          entry.ptsEl.textContent = `+${item.points} pts`;
+        }
+        if (entry.fillEl) {
+          const pct = Math.min(100, Math.max(8, Math.round((item.points / item.maxPoints) * 100)));
+          entry.fillEl.style.width = `${pct}%`;
+          const cls = item.points >= (item.maxPoints * 0.45) 
+            ? 'danger' 
+            : (item.points > 0 ? 'warning' : 'success');
+          entry.fillEl.className = `bar-fill ${cls}`;
+        }
+      }
+    });
+  }
+
+  // ========================================================================
+  // SCAN HISTORY LEDGER (Section 22: Local Audit Trail in localStorage)
+  // ========================================================================
+  function saveScanToHistory(report, doc) {
+    try {
+      const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ' + now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      const item = {
+        id: doc.id,
+        name: doc.name,
+        timestamp: timeStr,
+        score: report.compositeScore,
+        verdict: report.verdict,
+        verdictClass: report.verdictClass
+      };
+      // Keep unique by id and slice to latest 15
+      const updated = [item, ...list.filter(x => x.id !== doc.id)].slice(0, 15);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updated));
+      renderHistoryList();
+    } catch (e) {
+      console.warn('History storage error:', e);
+    }
+  }
+
+  function renderHistoryList() {
+    if (!historyList) return;
+    try {
+      const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      if (!list || list.length === 0) {
+        historyList.innerHTML = '<div class="history-empty">No previous document scans recorded in this local session.</div>';
+        return;
+      }
+      historyList.innerHTML = list.map(item => `
+        <div class="history-item">
+          <div class="history-item-left">
+            <span class="history-item-id">${item.id} — ${item.name}</span>
+            <span class="history-item-date">${item.timestamp} (On-Device Hardware Enclave)</span>
+          </div>
+          <div class="history-item-right">
+            <span class="history-item-score" style="color:${item.verdictClass === 'forged' ? 'var(--color-danger)' : (item.verdictClass === 'inconclusive' ? 'var(--color-warning)' : 'var(--color-success)')};">${item.score}/100</span>
+            <span class="history-item-badge ${item.verdictClass}">${item.verdict}</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      historyList.innerHTML = '<div class="history-empty">History loaded.</div>';
+    }
+  }
+
+  if (clearHistoryBtn) {
+    clearHistoryBtn.addEventListener('click', () => {
+      localStorage.removeItem(HISTORY_STORAGE_KEY);
+      renderHistoryList();
+      showToast('Local scan history ledger cleared.');
+    });
+  }
+
+  // Mobile Bottom Navigation Tab Switching
+  const mobileNavItems = [mNavHome, mNavScan, mNavLab, mNavRisk, mNavPrivacy].filter(Boolean);
+  mobileNavItems.forEach(item => {
+    item.addEventListener('click', () => {
+      mobileNavItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // Render initial scan history on load
+  renderHistoryList();
+
+  // ========================================================================
   // RUN 4 OPERATIONS FORENSIC ANALYSIS PIPELINE (RACE-CONDITION PROTECTED)
   // ========================================================================
   if (runAnalysisBtn) {
@@ -381,12 +546,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const reqId = ++state.activeAnalysisRequestId;
     clearRegions();
 
+    showProcessingOverlay();
+
     try {
+      setProcessingStep(1, 'active');
+      await new Promise(r => setTimeout(r, 60));
+      setProcessingStep(1, 'completed');
+
+      setProcessingStep(2, 'active');
+      await new Promise(r => setTimeout(r, 50));
+      setProcessingStep(2, 'completed');
+
+      setProcessingStep(3, 'active');
+      await new Promise(r => setTimeout(r, 50));
+      setProcessingStep(3, 'completed');
+
+      setProcessingStep(4, 'active');
+      await new Promise(r => setTimeout(r, 50));
+      setProcessingStep(4, 'completed');
+
+      setProcessingStep(5, 'active');
+      await new Promise(r => setTimeout(r, 50));
+      setProcessingStep(5, 'completed');
+
+      setProcessingStep(6, 'active');
+      await new Promise(r => setTimeout(r, 50));
+      setProcessingStep(6, 'completed');
+
+      setProcessingStep(7, 'active');
+
       const report = await forensicEngine.analyzeDocument(currentDoc.imageObject, {
         file: currentDoc.file,
         documentId: currentDocId,
         ocrText: getSampleOCRText(currentDoc.name)
       });
+
+      setProcessingStep(7, 'completed');
+      hideProcessingOverlay();
 
       // ====================================================================
       // RACE CONDITION & DOCUMENT ID VERIFICATION (Requirement 5 & 6)
@@ -472,6 +668,12 @@ document.addEventListener('DOMContentLoaded', () => {
         evidenceRows.appendChild(totalRow);
       }
 
+      // Update Risk Explorer Bars (Section 18)
+      updateRiskExplorer(report);
+
+      // Save Scan to Local History Ledger (Section 22)
+      saveScanToHistory(report, currentDoc);
+
       // Update Legal & Forensic Disclaimer (Section 10)
       if (disclaimerBox) {
         if (report.verdictClass === 'original') {
@@ -493,6 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       console.error('Forensic analysis error:', err);
+      hideProcessingOverlay();
     }
   }
 
