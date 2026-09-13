@@ -192,27 +192,66 @@
       <div class="hud-panel">
         <div>
           <div class="hud-header">
-            <span class="hud-title">Composite Forgery Assessment</span>
+            <span class="hud-title">Forensic Result & Evidence</span>
             <span class="hud-latency" id="latencyTag">Local: 72ms</span>
           </div>
 
+          <!-- Image Quality & Usability Banner (Section 12) -->
+          <div class="quality-status-banner quality-ok" id="qualityBanner">
+            <span id="qualityText">Image Quality: Optimal (Resolution & Sharpness Verified)</span>
+            <span id="qualityIcon" style="font-size:0.9rem;">✓</span>
+          </div>
+
+          <!-- Top Primary Result & Risk Score (Section 17 & 18) -->
           <div class="score-display-box">
-            <div class="risk-number-large" id="riskScoreNumber">83%</div>
-            <div class="risk-badge" id="riskVerdictBadge">HIGH FORGERY RISK</div>
+            <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+              Document Classification
+            </div>
+            <div class="risk-badge verdict-forged" id="riskVerdictBadge">LIKELY FORGED</div>
+            <div style="margin-top:14px;">
+              <span class="risk-number-large" id="riskScoreNumber">84</span>
+              <span style="font-size:1.4rem; font-weight:800; color:var(--text-muted); font-family:var(--font-mono);">/ 100</span>
+            </div>
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-top:2px;">
+              Calculated Forgery Risk
+            </div>
           </div>
 
-          <!-- Forensic Signals Summary -->
-          <div id="signalsList" style="margin-top:16px; display:flex; flex-direction:column; gap:6px;">
-            <!-- Populated dynamically -->
+          <!-- Why? Top Key Drivers (Section 18) -->
+          <div class="why-drivers-box" id="whyDriversBox">
+            <div class="why-drivers-title">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Why this decision? (Key Drivers)</span>
+            </div>
+            <div class="why-tags-row" id="whyTagsRow">
+              <span class="why-tag">Amount Field Splicing</span>
+              <span class="why-tag">Cloned Stamp NCC</span>
+            </div>
           </div>
 
-          <!-- Interactive Evidence Inspector Card -->
+          <!-- Evidence-Based Additive Points Breakdown Table (Section 6) -->
+          <div class="evidence-breakdown-card" id="evidenceBreakdownCard">
+            <div class="evidence-header">
+              <span>Forensic Signal Breakdown</span>
+              <span>Points Added</span>
+            </div>
+            <div id="evidenceRows">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Legal & Forensic Disclaimer (Section 10) -->
+          <div class="disclaimer-box" id="disclaimerBox" style="display:none;">
+            <strong>Forensic Notice:</strong> <span id="disclaimerText">No significant signs of manipulation were detected by the available forensic checks. This does not guarantee authenticity.</span>
+          </div>
+
+          <!-- Interactive Evidence Inspector Card ("Why is this suspicious?") -->
           <div class="inspector-box" id="regionInspector" style="margin-top:14px;">
             <div class="inspector-box-header">
-              <strong id="inspectorTitle" style="font-size:0.84rem; color:var(--text-primary);">Flagged Anomaly #1</strong>
+              <strong id="inspectorTitle" style="font-size:0.84rem; color:var(--text-primary);">Why is this suspicious?</strong>
               <span id="inspectorConfidence" style="font-size:0.75rem; font-weight:800; color:var(--color-danger);">Confidence: 94%</span>
             </div>
-            <p id="inspectorBody" style="font-size:0.8rem; color:var(--text-muted); line-height:1.4;">
+            <p id="inspectorBody" style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-top:4px;">
               Tap any highlighted box on the document to view detailed evidence.
             </p>
             <div id="inspectorMath" style="margin-top:8px; font-family:var(--font-mono); font-size:0.72rem; color:var(--text-muted); background:#ffffff; padding:6px 8px; border-radius:4px; border:1px solid var(--border-subtle);">

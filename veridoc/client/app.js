@@ -58,6 +58,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const signalsList = document.getElementById('signalsList');
   const verdictToast = document.getElementById('verdictToast');
 
+  // Quality, Evidence Breakdown & Verdict Elements (Sections 2, 6, 10, 12, 18)
+  const qualityBanner = document.getElementById('qualityBanner');
+  const qualityText = document.getElementById('qualityText');
+  const qualityIcon = document.getElementById('qualityIcon');
+  const whyDriversBox = document.getElementById('whyDriversBox');
+  const whyTagsRow = document.getElementById('whyTagsRow');
+  const evidenceBreakdownCard = document.getElementById('evidenceBreakdownCard');
+  const evidenceRows = document.getElementById('evidenceRows');
+  const disclaimerBox = document.getElementById('disclaimerBox');
+  const disclaimerText = document.getElementById('disclaimerText');
+
   // The 4 Operations Selector Buttons
   const opButtons = document.querySelectorAll('.op-select-btn');
 
@@ -391,29 +402,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
       state.analysisResults = report;
 
-      // Update HUD latency & score
+      // Update Quality Status Banner (Section 12)
+      if (qualityBanner && report.qualityCheck) {
+        const q = report.qualityCheck;
+        qualityBanner.className = `quality-status-banner ${q.passed ? 'quality-ok' : 'quality-warn'}`;
+        if (qualityText) {
+          qualityText.textContent = q.passed
+            ? `Image Quality: Optimal (${report.dimensions.width}×${report.dimensions.height}px, Sharpness: ${q.sharpnessScore}/100)`
+            : `⚠️ ${q.warnings[0] || 'Image quality low'} — ${q.guidance}`;
+        }
+        if (qualityIcon) {
+          qualityIcon.textContent = q.passed ? '✓' : '⚠️';
+        }
+      }
+
+      // Update Primary Result & Risk Score (Section 2, 3, 17)
       if (latencyTag) latencyTag.textContent = `Local: ${report.executionTimeMs}ms`;
-      if (riskScoreNumber) riskScoreNumber.textContent = `${report.compositeScore}%`;
-      if (riskVerdictBadge) {
-        riskVerdictBadge.textContent = report.riskLevel;
-        riskVerdictBadge.className = 'risk-badge';
-        if (report.compositeScore >= 65) {
-          riskVerdictBadge.classList.add('risk-high');
-          if (riskScoreNumber) riskScoreNumber.style.color = 'var(--color-danger)';
-        } else if (report.compositeScore >= 35) {
-          riskVerdictBadge.classList.add('risk-medium');
-          if (riskScoreNumber) riskScoreNumber.style.color = 'var(--color-warning)';
+      if (riskScoreNumber) {
+        riskScoreNumber.textContent = `${report.compositeScore}`;
+        if (report.verdictClass === 'forged') {
+          riskScoreNumber.style.color = 'var(--color-danger)';
+        } else if (report.verdictClass === 'inconclusive') {
+          riskScoreNumber.style.color = 'var(--color-warning)';
         } else {
-          riskVerdictBadge.classList.add('risk-low');
-          if (riskScoreNumber) riskScoreNumber.style.color = 'var(--color-success)';
+          riskScoreNumber.style.color = 'var(--color-success)';
+        }
+      }
+      if (riskVerdictBadge) {
+        riskVerdictBadge.textContent = report.verdict;
+        riskVerdictBadge.className = `risk-badge verdict-${report.verdictClass}`;
+      }
+
+      // Update Top Key Drivers ("Why?" - Section 18)
+      if (whyTagsRow && report.whyDrivers) {
+        whyTagsRow.innerHTML = '';
+        report.whyDrivers.forEach(driver => {
+          const tag = document.createElement('span');
+          tag.className = `why-tag ${report.verdictClass === 'original' ? 'clean' : ''}`;
+          tag.textContent = driver;
+          whyTagsRow.appendChild(tag);
+        });
+      }
+
+      // Update Evidence-Based Additive Points Breakdown Table (Section 6)
+      if (evidenceRows && report.evidenceBreakdown) {
+        evidenceRows.innerHTML = '';
+        report.evidenceBreakdown.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'evidence-row';
+          row.innerHTML = `
+            <div>
+              <div style="font-weight:700; color:var(--text-primary); font-size:0.75rem;">${item.name}</div>
+              <div style="font-size:0.67rem; color:var(--text-muted);">${item.detail}</div>
+            </div>
+            <div class="evidence-pts ${item.flagged ? 'flagged' : 'passed'}">
+              +${item.points} <span style="font-size:0.66rem; color:var(--text-muted); font-weight:normal;">/ ${item.maxPoints}</span>
+            </div>
+          `;
+          evidenceRows.appendChild(row);
+        });
+
+        // Add Total Row
+        const totalRow = document.createElement('div');
+        totalRow.className = 'evidence-row total-row';
+        totalRow.innerHTML = `
+          <span>Total Forgery Risk Score</span>
+          <span class="evidence-pts ${report.compositeScore >= 65 ? 'flagged' : (report.compositeScore < 35 ? 'passed' : '')}">${report.compositeScore} / 100</span>
+        `;
+        evidenceRows.appendChild(totalRow);
+      }
+
+      // Update Legal & Forensic Disclaimer (Section 10)
+      if (disclaimerBox) {
+        if (report.verdictClass === 'original') {
+          disclaimerBox.style.display = 'block';
+          if (disclaimerText && report.disclaimer) disclaimerText.textContent = report.disclaimer;
+        } else {
+          disclaimerBox.style.display = 'none';
         }
       }
 
       // Render the 4 Operations Validation Matrix Cards
       update4OperationsValidationMatrix(report);
-
-      // Render Signals List
-      renderSignalsList(report.layerScores);
 
       // Focus view on the CURRENTLY SELECTED operation (preserves user selection!)
       focusOperationView(state.selectedOperation, report);
@@ -553,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (regionInspector) {
       regionInspector.style.display = 'block';
-      if (inspectorTitle) inspectorTitle.textContent = `Flagged: ${region.signal || region.source}`;
+      if (inspectorTitle) inspectorTitle.textContent = `Why is this suspicious? (${region.signal || region.source})`;
       if (inspectorConfidence) {
         inspectorConfidence.textContent = `Confidence: ${Math.round((region.confidence || 0.92) * 100)}%`;
         inspectorConfidence.style.color = 'var(--color-danger)';
