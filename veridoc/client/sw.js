@@ -1,10 +1,9 @@
 /**
  * AegisDoc Service Worker
- * Ensures 100% Offline Capability in Airplane Mode.
- * All forensic algorithms, UI assets, and demo samples are cached locally.
+ * Ensures 100% Offline Capability in Airplane Mode with Network-First Live Updates.
  */
 
-const CACHE_NAME = 'aegisdoc-v2.6.0';
+const CACHE_NAME = 'aegisdoc-v3.0.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -22,11 +21,12 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching offline forensic assets');
+      console.log('[SW] Pre-caching v3.0.1 assets');
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -36,7 +36,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[SW] Purging stale cache:', key);
+            console.log('[SW] Purging old cache:', key);
             return caches.delete(key);
           }
         })
@@ -46,29 +46,23 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Never attempt caching for WebSocket or local bridge queries
+  // Never intercept WebSocket or backend endpoints
   if (event.request.url.includes('/ws') || event.request.url.includes('/api/')) {
     return;
   }
 
+  // Network-first strategy for live updates, fallback to cache offline
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
         }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
         return networkResponse;
-      }).catch(() => {
-        // Offline fallback
-        return caches.match('./index.html');
-      });
-    })
+      })
+      .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
   );
 });

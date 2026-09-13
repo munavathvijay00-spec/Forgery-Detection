@@ -122,8 +122,16 @@ async def handle_status(request):
         "active_rooms": len(ROOMS)
     })
 
+@web.middleware
+async def no_cache_middleware(request, handler):
+    resp = await handler(request)
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
+
 def create_app():
-    app = web.Application()
+    app = web.Application(middlewares=[no_cache_middleware])
     app.router.add_get("/ws", handle_ws)
     app.router.add_get("/api/status", handle_status)
     

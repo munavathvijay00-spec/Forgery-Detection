@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e40af' stroke-width='2.5'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='M9 12l2 2 4-4'/></svg>">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3.0.1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -721,14 +721,28 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="forensics.js"></script>
-  <script src="voice.js"></script>
-  <script src="bridge.js"></script>
-  <script src="app.js"></script>
+  <script src="forensics.js?v=3.0.1"></script>
+  <script src="voice.js?v=3.0.1"></script>
+  <script src="bridge.js?v=3.0.1"></script>
+  <script src="app.js?v=3.0.1"></script>
   <script>
+    // Invalidate stale Service Worker and cache storage for instant updates
+    if ('caches' in window) {
+      caches.keys().then((names) => {
+        for (let name of names) {
+          if (name !== 'aegisdoc-v3.0.1') {
+            caches.delete(name);
+          }
+        }
+      });
+    }
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW register:', err));
+        navigator.serviceWorker.register('sw.js?v=3.0.1')
+          .then((reg) => {
+            reg.update();
+          })
+          .catch((err) => console.log('SW register:', err));
       });
     }
   </script>
