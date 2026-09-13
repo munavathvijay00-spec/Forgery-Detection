@@ -1,8 +1,4 @@
 {
-  "version": 2,
-  "public": true,
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/veridoc/client/$1" }
-  ]
+  "framework": null,
+  "outputDirectory": "veridoc/client"
 }
