@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=3.5.3">
+  <link rel="stylesheet" href="styles.css?v=3.6.0">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
        ======================================================================== -->
   <header class="top-navbar">
     <div class="nav-container">
-      <a href="#landing" class="nav-brand">
+      <a href="#/home" class="nav-brand" data-route="home">
         <div class="nav-logo-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -40,15 +40,15 @@
       </a>
 
       <!-- Desktop Nav Links -->
-      <nav class="nav-links">
-        <a href="#landing" class="nav-link active">Overview</a>
-        <a href="#scannerSection" class="nav-link">Scan Document</a>
-        <a href="#workspace" class="nav-link">Forensic Lab</a>
-        <a href="#howItWorks" class="nav-link">How It Works</a>
-        <a href="#riskExplorer" class="nav-link">Risk Explorer</a>
-        <a href="#technology" class="nav-link">Technology</a>
-        <a href="#privacy" class="nav-link">Privacy Center</a>
-        <a href="#history" class="nav-link">History</a>
+      <nav class="nav-links" id="desktopNavLinks">
+        <a href="#/home" class="nav-link active" data-route="home">Home</a>
+        <a href="#/scan" class="nav-link" data-route="scan">Scan Document</a>
+        <a href="#/lab" class="nav-link" data-route="lab">Forensic Lab</a>
+        <a href="#/how-it-works" class="nav-link" data-route="how-it-works">How It Works</a>
+        <a href="#/risk" class="nav-link" data-route="risk">Risk Explorer</a>
+        <a href="#/technology" class="nav-link" data-route="technology">Technology</a>
+        <a href="#/privacy" class="nav-link" data-route="privacy">Privacy Center</a>
+        <a href="#/history" class="nav-link" data-route="history">History</a>
       </nav>
 
       <!-- Header Actions -->
@@ -69,43 +69,123 @@
           <span id="bridgeStatusText">Office Kit</span>
         </div>
 
-        <a href="#scannerSection" class="btn-primary nav-cta-btn">
+        <!-- Mobile Menu Toggle Button (Visible on mobile) -->
+        <button id="mobileMenuToggle" class="nav-icon-btn mobile-menu-btn" title="Toggle Navigation Menu" aria-label="Toggle navigation menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="menuIconHam">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="menuIconClose" style="display:none;">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+
+        <a href="#/scan" class="btn-primary nav-cta-btn" data-route="scan">
           <span>Scan Document</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- ========================================================================
-       SECTION 1: LANDING PAGE HERO (Section 4)
-       Editorial Fintech Aesthetic: Off-white background, charcoal typography
-       ======================================================================== -->
-  <section class="landing-hero" id="landing">
-    <div class="container hero-layout">
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span class="pulse-dot"></span>
-          <span>Autonomous On-Device Financial Forensics</span>
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav-drawer" id="mobileNavDrawer">
+    <div class="drawer-header">
+      <span class="drawer-title">AegisDoc Navigation</span>
+      <span class="drawer-badge">8 Modules</span>
+    </div>
+    <div class="drawer-links-grid">
+      <a href="#/home" class="drawer-link active" data-route="home">
+        <span class="drawer-icon">🏠</span>
+        <div class="drawer-text">
+          <strong>Home</strong>
+          <small>Overview & Interactive Proof</small>
         </div>
-        <h1 class="hero-headline">
-          Can You Trust <br>This Document?
-        </h1>
-        <p class="hero-subtext">
-          Analyze financial documents for signs of tampering, manipulation, and digital inconsistencies — with fully explainable mathematical evidence.
-        </p>
+      </a>
+      <a href="#/scan" class="drawer-link" data-route="scan">
+        <span class="drawer-icon">📷</span>
+        <div class="drawer-text">
+          <strong>Scan Document</strong>
+          <small>Ingestion & Active Document HUD</small>
+        </div>
+      </a>
+      <a href="#/lab" class="drawer-link" data-route="lab">
+        <span class="drawer-icon">🔬</span>
+        <div class="drawer-text">
+          <strong>Forensic Lab</strong>
+          <small>Viewfinder, ELA Heatmap & HUD</small>
+        </div>
+      </a>
+      <a href="#/how-it-works" class="drawer-link" data-route="how-it-works">
+        <span class="drawer-icon">⚙️</span>
+        <div class="drawer-text">
+          <strong>How It Works</strong>
+          <small>10-Stage Pipeline Methodology</small>
+        </div>
+      </a>
+      <a href="#/risk" class="drawer-link" data-route="risk">
+        <span class="drawer-icon">📊</span>
+        <div class="drawer-text">
+          <strong>Risk Explorer</strong>
+          <small>Score Breakdown & Thresholds</small>
+        </div>
+      </a>
+      <a href="#/technology" class="drawer-link" data-route="technology">
+        <span class="drawer-icon">💻</span>
+        <div class="drawer-text">
+          <strong>Technology</strong>
+          <small>Math Models & ELA Comparison</small>
+        </div>
+      </a>
+      <a href="#/privacy" class="drawer-link" data-route="privacy">
+        <span class="drawer-icon">🛡️</span>
+        <div class="drawer-text">
+          <strong>Privacy Center</strong>
+          <small>100% On-Device Enclave</small>
+        </div>
+      </a>
+      <a href="#/history" class="drawer-link" data-route="history">
+        <span class="drawer-icon">📜</span>
+        <div class="drawer-text">
+          <strong>History</strong>
+          <small>Local Verification Audit Ledger</small>
+        </div>
+      </a>
+    </div>
+  </div>
 
-        <div class="hero-cta-group">
-          <a href="#scannerSection" class="btn-primary hero-btn" id="heroScanCta">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-            <span>Scan a Document</span>
-          </a>
-          <a href="#technology" class="btn-secondary hero-btn">
-            <span>Explore the Technology →</span>
-          </a>
-        </div>
+  <!-- ========================================================================
+       PAGE 1: HOME (Hero & Interactive Challenge)
+       ======================================================================== -->
+  <div class="app-page active-page" id="page-home" data-page="home">
+    <!-- SECTION 1: LANDING PAGE HERO (Section 4) -->
+    <section class="landing-hero" id="landing">
+      <div class="container hero-layout">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            <span>Autonomous On-Device Financial Forensics</span>
+          </div>
+          <h1 class="hero-headline">
+            Can You Trust <br>This Document?
+          </h1>
+          <p class="hero-subtext">
+            Analyze financial documents for signs of tampering, manipulation, and digital inconsistencies — with fully explainable mathematical evidence.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#/scan" class="btn-primary hero-btn" id="heroScanCta" data-route="scan">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span>Scan a Document</span>
+            </a>
+            <a href="#/technology" class="btn-secondary hero-btn" data-route="technology">
+              <span>Explore the Technology →</span>
+            </a>
+          </div>
 
         <!-- Trust Indicators Bar (Section 5) -->
         <div class="trust-grid">
@@ -167,16 +247,14 @@
           </div>
           <div class="hero-showcase-callout">
             <span>💡 <strong>Illustrative benchmark showcase</strong> demonstrating how AegisDoc catches altered monetary figures.</span>
-            <a href="#scannerSection" class="hero-showcase-link">Scan or upload your own document below ↓</a>
+            <a href="#/scan" class="hero-showcase-link" data-route="scan">Scan or upload your own document below ↓</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ========================================================================
-       SECTION 2: "CAN YOU SPOT THE FORGERY?" INTERACTIVE SLIDER (Section 6)
-       ======================================================================== -->
+  <!-- SECTION 2: "CAN YOU SPOT THE FORGERY?" INTERACTIVE SLIDER (Section 6) -->
   <section class="challenge-section" id="challengeSection">
     <div class="container">
       <div class="section-heading text-center">
@@ -216,14 +294,16 @@
       </div>
     </div>
   </section>
+  </div>
 
   <!-- ========================================================================
-       SECTION 3: DEDICATED DOCUMENT SCANNER & INGESTION (Section 8 & 9)
-       Camera-First Minimal Touch UI + Locked Active Document State
+       PAGE 2: SCAN DOCUMENT (Ingestion, Camera & Active HUD)
        ======================================================================== -->
-  <section class="scanner-section" id="scannerSection">
-    <div class="container">
-      <div class="scanner-card">
+  <div class="app-page" id="page-scan" data-page="scan">
+    <!-- SECTION 3: DEDICATED DOCUMENT SCANNER & INGESTION (Section 8 & 9) -->
+    <section class="scanner-section" id="scannerSection">
+      <div class="container">
+        <div class="scanner-card">
         <div class="scanner-header">
           <div>
             <h2 class="scanner-title">Document Scanner & Ingestion</h2>
@@ -316,14 +396,14 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ========================================================================
-       SECTION 4: PRIMARY FORENSIC RESULTS LAB (Section 15 & 16)
-       Digital Forensics Centerpiece: Heatmap + Evidence Breakdown + "What Changed?"
+       PAGE 3: FORENSIC LAB (Canvas, Viewfinder, ELA & Risk HUD)
        ======================================================================== -->
-  <main class="container" id="workspace">
+  <div class="app-page" id="page-lab" data-page="lab">
+    <main class="container" id="workspace">
     <div class="workspace-grid">
       <!-- Left: Viewport, Document Canvas & Interactive Heatmap Overlay -->
       <div class="viewport-panel">
@@ -510,13 +590,15 @@
       </div>
     </section>
   </main>
+  </div>
 
   <!-- ========================================================================
-       SECTION 5: RISK EXPLORER (Section 18)
-       Interactive Data Visualization of evidence contribution bars
+       PAGE 5: RISK EXPLORER (Score Breakdown & Thresholds)
        ======================================================================== -->
-  <section class="risk-explorer-section" id="riskExplorer">
-    <div class="container">
+  <div class="app-page" id="page-risk" data-page="risk">
+    <!-- SECTION 5: RISK EXPLORER (Section 18) -->
+    <section class="risk-explorer-section" id="riskExplorer">
+      <div class="container">
       <div class="section-heading text-center">
         <span class="section-kicker">Transparent Scoring</span>
         <h2 class="section-title">Forensic Risk Explorer</h2>
@@ -594,15 +676,16 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ========================================================================
-       SECTION 6: HOW IT WORKS (Section 7)
-       Editorial Storytelling: 10-step animated pipeline
+       PAGE 4: HOW IT WORKS (10-Stage Pipeline Methodology)
        ======================================================================== -->
-  <section class="how-it-works-section" id="howItWorks">
-    <div class="container">
+  <div class="app-page" id="page-how-it-works" data-page="how-it-works">
+    <!-- SECTION 6: HOW IT WORKS (Section 7) -->
+    <section class="how-it-works-section" id="howItWorks">
+      <div class="container">
       <div class="section-heading text-center">
         <span class="section-kicker">Architecture Walkthrough</span>
         <h2 class="section-title">How AegisDoc Verifies Documents</h2>
@@ -683,15 +766,16 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ========================================================================
-       SECTION 7: ENGINEERING BLUEPRINT & TECHNOLOGY (Section 20)
-       Blueprint Aesthetic: Monospace accents, equations, architectural metrics
+       PAGE 6: TECHNOLOGY (Engineering Specifications & Math Models)
        ======================================================================== -->
-  <section class="technology-section" id="technology">
-    <div class="container">
+  <div class="app-page" id="page-technology" data-page="technology">
+    <!-- SECTION 7: ENGINEERING BLUEPRINT & TECHNOLOGY (Section 20) -->
+    <section class="technology-section" id="technology">
+      <div class="container">
       <div class="section-heading text-center">
         <span class="section-kicker">Engineering Specifications</span>
         <h2 class="section-title">Technology & Mathematical Foundations</h2>
@@ -750,15 +834,16 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ========================================================================
-       SECTION 8: PRIVACY CENTER (Section 19)
-       Calm Minimal: Complete Transparency & Zero Cloud Leakage Guarantee
+       PAGE 7: PRIVACY CENTER (Zero Cloud Leakage & Enclave Guarantee)
        ======================================================================== -->
-  <section class="privacy-section" id="privacy">
-    <div class="container">
+  <div class="app-page" id="page-privacy" data-page="privacy">
+    <!-- SECTION 8: PRIVACY CENTER (Section 19) -->
+    <section class="privacy-section" id="privacy">
+      <div class="container">
       <div class="section-heading text-center">
         <span class="section-kicker">Data Governance</span>
         <h2 class="section-title">Privacy Center & Enclave Architecture</h2>
@@ -804,36 +889,38 @@
           <p>Only detected bounding box coordinates, anomaly labels, and risk scores are synchronized over WebSocket. Raw document pixels are never transmitted.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ========================================================================
-       SECTION 9: SCAN HISTORY LEDGER (Section 22)
-       Financial Ledger Style: Local scan audit trail
+       PAGE 8: HISTORY (Local Verification Audit Ledger)
        ======================================================================== -->
-  <section class="history-section" id="history">
-    <div class="container">
-      <div class="section-heading text-center">
-        <span class="section-kicker">Local Audit Log</span>
-        <h2 class="section-title">Scan History Ledger</h2>
-        <p class="section-subtitle">
-          Encrypted local audit trail of documents verified in this session. Stored entirely in local device storage.
-        </p>
-      </div>
+  <div class="app-page" id="page-history" data-page="history">
+    <!-- SECTION 9: SCAN HISTORY LEDGER (Section 22) -->
+    <section class="history-section" id="history">
+      <div class="container">
+        <div class="section-heading text-center">
+          <span class="section-kicker">Local Audit Log</span>
+          <h2 class="section-title">Scan History Ledger</h2>
+          <p class="section-subtitle">
+            Encrypted local audit trail of documents verified in this session. Stored entirely in local device storage.
+          </p>
+        </div>
 
-      <div class="history-card">
-        <div class="history-header">
-          <span>Logged Document Scans</span>
-          <button id="clearHistoryBtn" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;">
-            Clear History
-          </button>
-        </div>
-        <div class="history-list" id="historyList">
-          <!-- Populated dynamically -->
+        <div class="history-card">
+          <div class="history-header">
+            <span>Logged Document Scans</span>
+            <button id="clearHistoryBtn" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;">
+              Clear History
+            </button>
+          </div>
+          <div class="history-list" id="historyList">
+            <!-- Populated dynamically -->
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ========================================================================
        PROCESSING OVERLAY: CINEMATIC TECHNICAL UI (Section 21)
@@ -948,36 +1035,36 @@
   </div>
 
   <!-- Mobile Bottom Navigation Bar (Section 24: Mobile UX) -->
-  <nav class="mobile-bottom-nav">
-    <a href="#landing" class="mobile-nav-item active" id="mNavHome">
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <a href="#/home" class="mobile-nav-item active" id="mNavHome" data-route="home">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Home</span>
     </a>
-    <a href="#scannerSection" class="mobile-nav-item" id="mNavScan">
+    <a href="#/scan" class="mobile-nav-item" id="mNavScan" data-route="scan">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span>Scan</span>
     </a>
-    <a href="#workspace" class="mobile-nav-item" id="mNavLab">
+    <a href="#/lab" class="mobile-nav-item" id="mNavLab" data-route="lab">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      <span>Results</span>
+      <span>Lab</span>
     </a>
-    <a href="#riskExplorer" class="mobile-nav-item" id="mNavRisk">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span>Risk</span>
+    <a href="#/technology" class="mobile-nav-item" id="mNavTech" data-route="technology">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+      <span>Tech</span>
     </a>
-    <a href="#privacy" class="mobile-nav-item" id="mNavPrivacy">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>Privacy</span>
-    </a>
+    <button class="mobile-nav-item" id="mNavMore" title="All Modules" style="background:none; border:none; cursor:pointer;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span>Menu</span>
+    </button>
   </nav>
 
   <!-- Toast Notification -->
   <div id="verdictToast"></div>
 
   <!-- Scripts -->
-  <script src="forensics.js?v=3.5.3"></script>
-  <script src="voice.js?v=3.5.3"></script>
-  <script src="bridge.js?v=3.5.3"></script>
-  <script src="app.js?v=3.5.3"></script>
+  <script src="forensics.js?v=3.6.0"></script>
+  <script src="voice.js?v=3.6.0"></script>
+  <script src="bridge.js?v=3.6.0"></script>
+  <script src="app.js?v=3.6.0"></script>
 </body>
 </html>

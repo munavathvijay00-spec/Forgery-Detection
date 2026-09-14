@@ -516,14 +516,206 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mobile Bottom Navigation Tab Switching
-  const mobileNavItems = [mNavHome, mNavScan, mNavLab, mNavRisk, mNavPrivacy].filter(Boolean);
-  mobileNavItems.forEach(item => {
-    item.addEventListener('click', () => {
-      mobileNavItems.forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-    });
-  });
+  // ========================================================================
+  // CENTRAL SPA APPLICATION VIEW ROUTER (Section 23: Application Routing)
+  // ========================================================================
+  class AegisRouter {
+    constructor() {
+      // Map of canonical route identifiers to DOM page elements
+      this.routes = {
+        'home': document.getElementById('page-home'),
+        'scan': document.getElementById('page-scan'),
+        'lab': document.getElementById('page-lab'),
+        'how-it-works': document.getElementById('page-how-it-works'),
+        'risk': document.getElementById('page-risk'),
+        'technology': document.getElementById('page-technology'),
+        'privacy': document.getElementById('page-privacy'),
+        'history': document.getElementById('page-history')
+      };
+
+      // Aliases mapping for backward compatibility and clean paths
+      this.aliases = {
+        '': 'home',
+        '/': 'home',
+        'home': 'home',
+        'landing': 'home',
+        'overview': 'home',
+        'scan': 'scan',
+        'scanner': 'scan',
+        'scannerSection': 'scan',
+        'lab': 'lab',
+        'workspace': 'lab',
+        'results': 'lab',
+        'matrix': 'lab',
+        'matrixSection': 'lab',
+        'how-it-works': 'how-it-works',
+        'howitworks': 'how-it-works',
+        'howItWorks': 'how-it-works',
+        'risk': 'risk',
+        'risk-explorer': 'risk',
+        'riskExplorer': 'risk',
+        'technology': 'technology',
+        'tech': 'technology',
+        'privacy': 'privacy',
+        'privacy-center': 'privacy',
+        'history': 'history'
+      };
+
+      this.currentRoute = 'home';
+      this.isNavigating = false;
+      this.init();
+    }
+
+    normalizeRoute(raw) {
+      if (!raw) return 'home';
+      let cleaned = String(raw).trim();
+      if (cleaned.startsWith('#/')) cleaned = cleaned.slice(2);
+      else if (cleaned.startsWith('#')) cleaned = cleaned.slice(1);
+      if (cleaned.startsWith('/')) cleaned = cleaned.slice(1);
+      cleaned = cleaned.split('?')[0].split('&')[0];
+      return this.aliases[cleaned] || this.aliases[cleaned.toLowerCase()] || (this.routes[cleaned] ? cleaned : 'home');
+    }
+
+    navigate(target, updateHash = true) {
+      const canonical = this.normalizeRoute(target);
+      const targetPage = this.routes[canonical];
+      if (!targetPage) return;
+
+      this.currentRoute = canonical;
+
+      // 1. Switch active page views
+      Object.entries(this.routes).forEach(([key, pageEl]) => {
+        if (!pageEl) return;
+        if (key === canonical) {
+          pageEl.classList.add('active-page');
+        } else {
+          pageEl.classList.remove('active-page');
+        }
+      });
+
+      // 2. Synchronize navigation active states across desktop, mobile drawer, and bottom nav
+      document.querySelectorAll('.nav-link[data-route]').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('data-route') === canonical);
+      });
+      document.querySelectorAll('.drawer-link[data-route]').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('data-route') === canonical);
+      });
+      document.querySelectorAll('.mobile-nav-item[data-route]').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-route') === canonical);
+      });
+
+      // 3. Close mobile drawer if open
+      this.closeMobileDrawer();
+
+      // 4. Update browser URL hash without jump
+      if (updateHash && window.location.hash !== `#/${canonical}`) {
+        this.isNavigating = true;
+        window.location.hash = `#/${canonical}`;
+        setTimeout(() => { this.isNavigating = false; }, 60);
+      }
+
+      // 5. Always scroll to top on page view change
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
+      // 6. If navigating to Forensic Lab, recalculate canvas regions
+      if (canonical === 'lab' && state.activeDocument && state.activeDocument.findings) {
+        setTimeout(() => {
+          if (state.activeDocument && state.activeDocument.findings) {
+            renderSuspiciousRegions(state.activeDocument.findings.regions);
+          }
+        }, 60);
+      }
+    }
+
+    navigateFromHash() {
+      if (this.isNavigating) return;
+      const hash = window.location.hash;
+      this.navigate(hash, false);
+    }
+
+    closeMobileDrawer() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const hamIcon = document.getElementById('menuIconHam');
+      const closeIcon = document.getElementById('menuIconClose');
+      if (drawer) drawer.classList.remove('open');
+      if (hamIcon) hamIcon.style.display = 'block';
+      if (closeIcon) closeIcon.style.display = 'none';
+    }
+
+    toggleMobileDrawer() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const hamIcon = document.getElementById('menuIconHam');
+      const closeIcon = document.getElementById('menuIconClose');
+      if (!drawer) return;
+      const isOpen = drawer.classList.toggle('open');
+      if (hamIcon) hamIcon.style.display = isOpen ? 'none' : 'block';
+      if (closeIcon) closeIcon.style.display = isOpen ? 'block' : 'none';
+    }
+
+    init() {
+      // Listen for browser hash changes (Back / Forward buttons & manual hash input)
+      window.addEventListener('hashchange', () => this.navigateFromHash());
+
+      // Global click interceptor for all route-bearing elements
+      document.addEventListener('click', (e) => {
+        const link = e.target.closest('[data-route], a[href^="#/"], a[href^="#"]');
+        if (!link) return;
+
+        // Ignore modal actions or non-route buttons
+        if (link.id && (link.id.includes('Modal') || link.id.includes('Report') || link.id.includes('Bridge'))) {
+          return;
+        }
+
+        const dataRoute = link.getAttribute('data-route');
+        if (dataRoute) {
+          e.preventDefault();
+          this.navigate(dataRoute);
+          return;
+        }
+
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const rawHash = href.slice(1);
+          const normalized = this.normalizeRoute(rawHash);
+          if (this.routes[normalized]) {
+            e.preventDefault();
+            this.navigate(normalized);
+          }
+        }
+      });
+
+      // Mobile Menu Hamburger Toggle
+      const mobileToggle = document.getElementById('mobileMenuToggle');
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleMobileDrawer();
+        });
+      }
+
+      // Mobile Bottom Nav "More / Menu" Toggle
+      const mNavMore = document.getElementById('mNavMore');
+      if (mNavMore) {
+        mNavMore.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleMobileDrawer();
+        });
+      }
+
+      // Initial route on page load
+      const initialHash = window.location.hash;
+      if (initialHash) {
+        this.navigate(initialHash, false);
+      } else {
+        this.navigate('home', true);
+      }
+    }
+  }
+
+  const router = new AegisRouter();
+  window.router = router;
 
   // Render initial scan history on load
   renderHistoryList();
@@ -869,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
           file: file,
           isBenchmark: false
         });
-        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
+        router.navigate('lab');
         URL.revokeObjectURL(blobUrl);
       };
       img.src = blobUrl;
@@ -930,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
           file: file,
           isBenchmark: false
         });
-        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
+        router.navigate('lab');
         URL.revokeObjectURL(blobUrl);
       };
       img.src = blobUrl;
@@ -957,7 +1149,7 @@ document.addEventListener('DOMContentLoaded', () => {
           file: null,
           isBenchmark: false
         });
-        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
+        router.navigate('lab');
         URL.revokeObjectURL(blobUrl);
       };
       snap.src = blobUrl;
@@ -969,21 +1161,20 @@ document.addEventListener('DOMContentLoaded', () => {
       cameraStream.getTracks().forEach(track => track.stop());
       cameraStream = null;
     }
-    if (cameraVideo) cameraVideo.style.display = 'none';
-    if (cameraGuidelines) cameraGuidelines.style.display = 'none';
-    if (documentCanvas) documentCanvas.style.display = 'block';
     isCameraActive = false;
-    if (cameraBtnText) cameraBtnText.textContent = 'Open Camera';
+    if (cameraVideo) cameraVideo.style.display = 'none';
+    if (documentCanvas) documentCanvas.style.display = 'block';
+    if (cameraGuidelines) cameraGuidelines.style.display = 'none';
+    if (cameraBtnText) cameraBtnText.textContent = 'Open Live Camera';
   }
 
-  // ========================================================================
-  // BENCHMARK SAMPLE SELECTOR (EXPLICIT DOCUMENT INGESTION)
-  // ========================================================================
+  // Benchmark Synthetic Demo Selector (Section 30: Hackathon Demo)
   if (benchmarkSelect) {
     benchmarkSelect.addEventListener('change', (e) => {
       const sampleKey = e.target.value;
       if (sampleKey) {
         loadBenchmarkSample(sampleKey);
+        router.navigate('lab');
         benchmarkSelect.value = ''; // Reset select to placeholder
       }
     });
@@ -1343,9 +1534,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const testBtn = document.getElementById('testChallengeDocBBtn');
       if (testBtn) {
         testBtn.addEventListener('click', () => {
-          document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
           loadBenchmarkSample('sample_3_date_font_forged');
           selectOperation(3);
+          router.navigate('lab');
         });
       }
     });
