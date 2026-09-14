@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=3.5.0">
+  <link rel="stylesheet" href="styles.css?v=3.5.1">
 </head>
 <body>
 
@@ -33,7 +33,7 @@
             <path d="M9 12l2 2 4-4"/>
           </svg>
         </div>
-        <div>
+        <div class="nav-brand-text">
           <span class="nav-brand-title">AegisDoc</span>
           <span class="nav-brand-tagline">Know Before You Trust</span>
         </div>
@@ -135,8 +135,12 @@
       <!-- Hero Visual: Realistic Document with Scanline & Evidence Marker -->
       <div class="hero-visual">
         <div class="hero-doc-card">
+          <div class="hero-showcase-badge">
+            <span class="badge-dot"></span>
+            <span>CONTROLLED BENCHMARK SAMPLE: ALTERED AMOUNT DETECTION</span>
+          </div>
           <div class="hero-doc-header">
-            <span class="doc-mock-title">GLOBAL APEX FINANCIAL STATEMENT</span>
+            <span class="doc-mock-title">SAMPLE 2: SPLICED BALANCE DEMO</span>
             <span class="doc-mock-status flagged">FLAGGED: ALTERED AMOUNT</span>
           </div>
           <div class="hero-doc-preview">
@@ -160,6 +164,10 @@
               <span class="m-label">Execution</span>
               <span class="m-val success">72ms (On-Device)</span>
             </div>
+          </div>
+          <div class="hero-showcase-callout">
+            <span>💡 <strong>Illustrative benchmark showcase</strong> demonstrating how AegisDoc catches altered monetary figures.</span>
+            <a href="#scannerSection" class="hero-showcase-link">Scan or upload your own document below ↓</a>
           </div>
         </div>
       </div>
@@ -967,9 +975,9 @@
   <div id="verdictToast"></div>
 
   <!-- Scripts -->
-  <script src="forensics.js?v=3.5.0"></script>
-  <script src="voice.js?v=3.5.0"></script>
-  <script src="bridge.js?v=3.5.0"></script>
-  <script src="app.js?v=3.5.0"></script>
+  <script src="forensics.js?v=3.5.1"></script>
+  <script src="voice.js?v=3.5.1"></script>
+  <script src="bridge.js?v=3.5.1"></script>
+  <script src="app.js?v=3.5.1"></script>
 </body>
 </html>

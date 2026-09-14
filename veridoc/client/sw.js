@@ -3,7 +3,7 @@
  * Ensures 100% Offline Capability in Airplane Mode with Network-First Live Updates.
  */
 
-const CACHE_NAME = 'aegisdoc-v3.5.0';
+const CACHE_NAME = 'aegisdoc-v3.5.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * - Leaves state.selectedOperation strictly intact!
    * - Triggers analysis for all 4 operations
    */
-  async function setActiveDocument({ name, imageObject, arrayBuffer = null, file = null }) {
+  async function setActiveDocument({ name, imageObject, arrayBuffer = null, file = null, isBenchmark = false }) {
     stopCamera();
     clearRegions();
     viewMode = 'normal';
@@ -215,7 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
       imageObject: imageObject,
       dimensions: { width, height },
       file: file,
-      arrayBuffer: arrayBuffer
+      arrayBuffer: arrayBuffer,
+      isBenchmark: Boolean(isBenchmark)
     };
 
     // Render image to canvas immediately
@@ -578,7 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const report = await forensicEngine.analyzeDocument(currentDoc.imageObject, {
         file: currentDoc.file,
         documentId: currentDocId,
-        ocrText: getSampleOCRText(currentDoc.name)
+        ocrText: getSampleOCRText(currentDoc.name, currentDoc.isBenchmark || false)
       });
 
       setProcessingStep(7, 'completed');
@@ -865,8 +866,10 @@ document.addEventListener('DOMContentLoaded', () => {
           name: file.name,
           imageObject: img,
           arrayBuffer: arrayBuffer,
-          file: file
+          file: file,
+          isBenchmark: false
         });
+        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
         URL.revokeObjectURL(blobUrl);
       };
       img.src = blobUrl;
@@ -924,8 +927,10 @@ document.addEventListener('DOMContentLoaded', () => {
           name: 'Camera Capture ' + new Date().toLocaleTimeString(),
           imageObject: img,
           arrayBuffer: arrayBuffer,
-          file: file
+          file: file,
+          isBenchmark: false
         });
+        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
         URL.revokeObjectURL(blobUrl);
       };
       img.src = blobUrl;
@@ -949,8 +954,10 @@ document.addEventListener('DOMContentLoaded', () => {
           name: 'Camera Capture ' + new Date().toLocaleTimeString(),
           imageObject: snap,
           arrayBuffer: arrayBuffer,
-          file: null
+          file: null,
+          isBenchmark: false
         });
+        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
         URL.revokeObjectURL(blobUrl);
       };
       snap.src = blobUrl;
@@ -1004,7 +1011,8 @@ document.addEventListener('DOMContentLoaded', () => {
           name: config.name,
           imageObject: img,
           arrayBuffer: arrayBuffer,
-          file: null
+          file: null,
+          isBenchmark: true
         });
         URL.revokeObjectURL(blobUrl);
       };
@@ -1018,7 +1026,8 @@ document.addEventListener('DOMContentLoaded', () => {
           name: config.name,
           imageObject: img,
           arrayBuffer: null,
-          file: null
+          file: null,
+          isBenchmark: true
         });
       };
       img.src = config.path;
@@ -1391,15 +1400,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================================================
-  // OCR Context Helper
+  // OCR Context Helper (Restricted strictly to synthetic benchmark samples)
   // ========================================================================
-  function getSampleOCRText(docName) {
+  function getSampleOCRText(docName, isBenchmark = false) {
+    if (!isBenchmark) {
+      return ''; // Never inject synthetic demo text for real user uploads!
+    }
     const name = (docName || '').toLowerCase();
-    if (name.includes('sample_2') || name.includes('amount') || name.includes('splice')) {
+    if (name.includes('sample_2')) {
       return 'global apex financial certified account transaction statement 9182 3019 4410 aarav s mehta 01-sep-2026 opening balance 1,18,500.00 03-sep-2026 tech corp salary 95,000.00 total credits inr 95,000.00 total debits inr 29,800.00 net closing inr 9,83,700.00 closing balance 9,83,700.00';
-    } else if (name.includes('sample_3') || name.includes('date') || name.includes('font')) {
+    } else if (name.includes('sample_3')) {
       return 'global apex financial income salary certificate tax assessment 4820 9102 3318 pooja v nair 01-jul-2026 01-aug-2026 01-sep-2026 28-dec-2027 performance incentive bonus 31-dec-2028 expiry';
-    } else if (name.includes('sample_4') || name.includes('clone') || name.includes('seal') || name.includes('stamp')) {
+    } else if (name.includes('sample_4')) {
       return 'commercial credit facility approval gaf-loan-77210 1029 4810 5519 apex horizon ventures inr 50,00,000.00 10-sep-2026 executive director endorsement';
     }
     return 'global apex financial certified account transaction statement 9182 3019 4410 aarav s mehta 01-sep-2026 opening balance 1,18,500.00 03-sep-2026 tech corp salary 95,000.00 12-sep-2026 closing balance 1,83,700.00 net closing inr 1,83,700.00';
