@@ -230,11 +230,26 @@ class AegisForensicEngine {
     } else if (flaggedCount === 1 || suspiciousRegions.length > 0) {
       verdict = 'SUSPICIOUS / INCONCLUSIVE';
       verdictClass = 'inconclusive';
-      // Keep points bounded between 28 and 48 pts
+      // Bound points strictly between 32 and 48 pts (never <= 20)
       let currentSum = Object.values(rawPoints).reduce((a, b) => a + b, 0);
-      if (currentSum < 28) {
-        const key = flaggedLayers[0] || (suspiciousRegions[0]?.source === 'ELA' ? 'ela' : 'noise');
-        rawPoints[key] = Math.min(maxPointsMap[key], rawPoints[key] + (28 - currentSum));
+      if (currentSum < 32) {
+        const primaryKey = flaggedLayers[0] || (suspiciousRegions[0]?.source === 'ELA' ? 'ela' : 'noise');
+        if (primaryKey && maxPointsMap[primaryKey]) {
+          rawPoints[primaryKey] = maxPointsMap[primaryKey];
+        }
+        currentSum = Object.values(rawPoints).reduce((a, b) => a + b, 0);
+        if (currentSum < 32) {
+          const rem = 32 - currentSum;
+          const otherKeys = ['ela', 'noise', 'metadata', 'geometry'].filter(k => k !== primaryKey);
+          let remNeeded = rem;
+          for (const k of otherKeys) {
+            if (remNeeded <= 0) break;
+            const room = maxPointsMap[k] - rawPoints[k];
+            const add = Math.min(room, Math.ceil(remNeeded / otherKeys.length));
+            rawPoints[k] += Math.max(0, add);
+            remNeeded -= add;
+          }
+        }
       } else if (currentSum > 48) {
         const scale = 48 / currentSum;
         Object.keys(rawPoints).forEach(k => {
