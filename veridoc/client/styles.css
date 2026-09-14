@@ -61,6 +61,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -70,6 +71,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* Base Buttons */
@@ -2124,11 +2126,209 @@ body {
   align-items: center;
 }
 @media (max-width: 768px) {
+  /* Top Header: Remove overflowing desktop CTA button and optimize spacing */
+  .top-navbar {
+    padding: 0 14px;
+    min-height: 58px;
+  }
+  .nav-container {
+    gap: 8px;
+  }
+  .nav-cta-btn {
+    display: none !important; /* Hide redundant desktop Scan CTA in mobile header */
+  }
+  .nav-brand {
+    gap: 8px;
+  }
+  .nav-logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .nav-brand-title {
+    font-size: 1.05rem;
+  }
+  .nav-brand-tagline {
+    font-size: 0.62rem;
+  }
+  .nav-actions {
+    gap: 8px;
+  }
+  .bridge-status-pill {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+
+  /* Mobile Bottom Navigation & Safe Area Inset for Modern Devices */
   .mobile-bottom-nav {
     display: flex;
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   body {
-    padding-bottom: 64px;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Hero Section Mobile Polish */
+  .landing-hero {
+    padding: 32px 0 24px 0;
+  }
+  .hero-headline {
+    font-size: clamp(1.85rem, 7.5vw, 2.3rem);
+    margin-bottom: 14px;
+    line-height: 1.18;
+  }
+  .hero-subtext {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .hero-cta-group .hero-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 16px;
+    font-size: 0.92rem;
+  }
+
+  /* Scanner Controls & Actions Mobile Stacking */
+  .scanner-card {
+    padding: 18px 14px;
+  }
+  .scanner-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+  }
+  .scanner-actions button,
+  .scanner-actions .benchmark-select-wrapper,
+  .scanner-actions .benchmark-select {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Document Canvas & Viewport Mobile Adaptations */
+  .viewport-panel {
+    padding: 14px;
+  }
+  .view-mode-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .view-mode-bar > div {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+  }
+  .view-mode-bar .view-btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 0.74rem;
+  }
+  #runAnalysisBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  /* Workspace HUD Panel */
+  .hud-panel {
+    padding: 16px 14px;
+  }
+  .hud-actions-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Modals Mobile Sizing */
+  .cert-modal-card,
+  .bridge-modal-card {
+    padding: 22px 16px;
+    margin: 12px;
+    max-width: 94vw;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+  .cert-details-list {
+    padding: 10px 12px;
+  }
+  .cert-row {
+    font-size: 0.78rem;
+  }
+  .cert-row strong.mono {
+    font-size: 0.72rem;
+    word-break: break-all;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra Small Devices (360px - 412px Phones like iQOO, Galaxy, Pixel) */
+  .top-navbar {
+    padding: 0 10px;
+  }
+  .nav-logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .nav-logo-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .nav-brand-title {
+    font-size: 0.96rem;
+  }
+  .nav-brand-tagline {
+    font-size: 0.58rem;
+  }
+  .bridge-status-pill {
+    padding: 4px 8px;
+    font-size: 0.66rem;
+  }
+  .trust-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding-top: 16px;
+  }
+  .trust-item {
+    padding: 10px 8px;
+  }
+  .trust-icon {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+  }
+  .trust-title {
+    font-size: 0.76rem;
+    margin-bottom: 2px;
+  }
+  .trust-desc {
+    font-size: 0.65rem;
+    line-height: 1.3;
+  }
+
+  .active-doc-hud {
+    padding: 8px 12px;
+  }
+  .doc-hud-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .doc-hud-item {
+    min-width: 0;
+  }
+  .doc-hud-val {
+    max-width: 125px;
   }
 }
 .mobile-nav-item {
