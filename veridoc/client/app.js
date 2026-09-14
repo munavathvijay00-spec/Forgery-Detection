@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const hudDocHash = document.getElementById('hudDocHash');
   const hudDocDim = document.getElementById('hudDocDim');
   const hudDocStatus = document.getElementById('hudDocStatus');
+  const modeBadge = document.getElementById('modeBadge');
+  const modeBadgeText = document.getElementById('modeBadgeText');
 
   // HUD & Score Elements
   const latencyTag = document.getElementById('latencyTag');
@@ -268,8 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateActiveDocumentHUD() {
-    if (!state.activeDocument) return;
-    const { id, name, hash, dimensions } = state.activeDocument;
+    if (!state.activeDocument) {
+      renderEmptyState();
+      return;
+    }
+    const { id, name, hash, dimensions, isBenchmark } = state.activeDocument;
     if (hudDocName) hudDocName.textContent = name;
     if (hudDocId) hudDocId.textContent = id;
     if (hudDocHash) {
@@ -281,6 +286,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hudDocDim) hudDocDim.textContent = `${dimensions.width} × ${dimensions.height} px`;
     if (hudDocStatus) {
       hudDocStatus.innerHTML = `<span class="hud-status-dot"></span><span>STATE LOCKED (${id})</span>`;
+    }
+    if (modeBadge) {
+      if (isBenchmark) {
+        modeBadge.className = 'mode-badge demo';
+        if (modeBadgeText) modeBadgeText.textContent = 'SYNTHETIC BENCHMARK DEMO';
+      } else {
+        modeBadge.className = 'mode-badge real';
+        if (modeBadgeText) modeBadgeText.textContent = 'REAL ON-DEVICE ANALYSIS';
+      }
     }
   }
 
@@ -771,7 +785,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const report = await forensicEngine.analyzeDocument(currentDoc.imageObject, {
         file: currentDoc.file,
         documentId: currentDocId,
-        ocrText: getSampleOCRText(currentDoc.name, currentDoc.isBenchmark || false)
+        ocrText: getSampleOCRText(currentDoc.name, currentDoc.isBenchmark || false),
+        isBenchmark: Boolean(currentDoc.isBenchmark)
       });
 
       setProcessingStep(7, 'completed');
@@ -1265,10 +1280,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderWhatChanged(docName, report, selectedOp = 1) {
     if (!whatChangedCard || !diffRows) return;
     whatChangedCard.style.display = 'block';
+    const isBench = Boolean(state.activeDocument && state.activeDocument.isBenchmark);
     const name = (docName || '').toLowerCase();
 
-    if (selectedOp === 2 || name.includes('sample_2')) {
-      if (name.includes('sample_2') || (report && report.layerScores.ela > 45)) {
+    // STRICT ISOLATION: Synthetic benchmark text is ONLY used for synthetic demo samples
+    if (isBench) {
+      if (name.includes('sample_2')) {
         diffRows.innerHTML = `
           <div class="diff-row">
             <span style="font-weight:700; color:var(--text-secondary);">Op 2: Closing Balance</span>
@@ -1282,10 +1299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         return;
       }
-    }
-    
-    if (selectedOp === 3 || name.includes('sample_3')) {
-      if (name.includes('sample_3') || (report && report.layerScores.geometry > 40)) {
+      if (name.includes('sample_3')) {
         diffRows.innerHTML = `
           <div class="diff-row">
             <span style="font-weight:700; color:var(--text-secondary);">Op 3: Bonus Expiry Date</span>
@@ -1299,10 +1313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         return;
       }
-    }
-    
-    if (selectedOp === 4 || name.includes('sample_4')) {
-      if (name.includes('sample_4') || (report && report.layerScores.copyMove > 50)) {
+      if (name.includes('sample_4')) {
         diffRows.innerHTML = `
           <div class="diff-row">
             <span style="font-weight:700; color:var(--text-secondary);">Op 4: Authorization Seal</span>
@@ -1318,35 +1329,46 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (report && report.compositeScore < 35) {
+    // REAL DOCUMENTS: Render findings derived strictly from the active document's pixel analysis
+    if (report && report.compositeScore <= 20) {
       diffRows.innerHTML = `
         <div class="diff-row">
           <span style="font-weight:700; color:var(--color-success);">Authenticity Audit</span>
           <span style="color:var(--color-success); font-weight:800;">ALL 4 OPERATIONS PASSED</span>
         </div>
         <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
-          No unauthorized modifications detected in document [${docName}]. Substrate noise variance, ELA compression matrices, typography, and seals match authentic baseline.
+          No unauthorized modifications detected in active document [${docName || 'Active'}]. Substrate noise variance, ELA compression matrices, typography, and stamp correlations match authentic baseline.
         </div>
       `;
     } else if (report && report.suspiciousRegions && report.suspiciousRegions.length > 0) {
       const reg = report.suspiciousRegions[0];
       diffRows.innerHTML = `
         <div class="diff-row">
-          <span style="font-weight:700; color:var(--color-danger);">${reg.source || 'Flagged Region'}</span>
-          <span class="diff-after">${reg.signal || 'Anomaly Detected'}</span>
+          <span style="font-weight:700; color:var(--color-danger);">${reg.source || 'Flagged Anomaly'}</span>
+          <span class="diff-after">${reg.signal || 'Detected Anomaly'}</span>
         </div>
         <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
           ${reg.explanation}
         </div>
       `;
+    } else if (report && report.whyDrivers && report.whyDrivers.length > 0) {
+      diffRows.innerHTML = `
+        <div class="diff-row">
+          <span style="font-weight:700; color:var(--text-secondary);">Primary Drivers</span>
+          <span style="font-weight:600; color:${report.verdictClass === 'original' ? 'var(--color-success)' : 'var(--color-danger)'};">${report.whyDrivers[0]}</span>
+        </div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
+          Risk Score: ${report.compositeScore}/100 · ${report.verdict}
+        </div>
+      `;
     } else {
       diffRows.innerHTML = `
         <div class="diff-row">
-          <span style="font-weight:700; color:var(--text-secondary);">Operation OP-0${selectedOp}</span>
-          <span style="color:var(--color-success); font-weight:700;">Zero Discrepancies</span>
+          <span style="font-weight:600; color:var(--text-muted);">Inspection State</span>
+          <span style="color:var(--text-muted);">AWAITING DOCUMENT SCAN</span>
         </div>
         <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
-          Document matches reference baseline for this forensic operation.
+          Upload or capture a financial document to execute forensic comparison.
         </div>
       `;
     }
@@ -1551,14 +1573,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase() + ' ' + now.toLocaleTimeString('en-GB') + ' UTC';
 
     const activeDoc = state.activeDocument;
-    if (certDocId) certDocId.textContent = activeDoc ? `${activeDoc.id} (${activeDoc.name.slice(0, 16)})` : 'DOC-UNKNOWN';
+    if (certDocId) certDocId.textContent = activeDoc ? `${activeDoc.id} (${activeDoc.name.slice(0, 16)})` : '--';
     if (certTimestamp) certTimestamp.textContent = timeStr;
-    if (certLatency) certLatency.textContent = state.analysisResults ? `${state.analysisResults.executionTimeMs}ms` : '72ms';
+    if (certLatency) certLatency.textContent = state.analysisResults ? `${state.analysisResults.executionTimeMs}ms` : '--ms';
 
     if (state.analysisResults) {
       const rep = state.analysisResults;
       if (certRiskScore) {
-        certRiskScore.textContent = `${rep.compositeScore}% (${rep.riskLevel})`;
+        certRiskScore.textContent = `${rep.compositeScore} / 100 (${rep.verdict})`;
         certRiskScore.style.color = rep.compositeScore >= 65 ? 'var(--color-danger)' : (rep.compositeScore >= 35 ? 'var(--color-warning)' : 'var(--color-success)');
       }
       if (certRationaleText) {
@@ -1567,6 +1589,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           certRationaleText.textContent = `Primary Finding: All 4 forensic operations validated successfully. Continuous substrate noise, uniform 82% ELA compression, and verified typography.`;
         }
+      }
+    } else {
+      if (certRiskScore) {
+        certRiskScore.textContent = '-- / 100 (AWAITING SCAN)';
+        certRiskScore.style.color = 'var(--text-primary)';
+      }
+      if (certRationaleText) {
+        certRationaleText.textContent = 'Awaiting document forensic analysis.';
       }
     }
     reportModal.classList.add('open');
@@ -1609,7 +1639,170 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================================================
-  // INITIAL INGESTION (Load Sample 1 Baseline as Active Document)
+  // EMPTY STATE INITIALIZATION (Requirement 1 & 7)
   // ========================================================================
-  loadBenchmarkSample('sample_1_authentic');
+  function renderEmptyState() {
+    state.activeDocument = null;
+    state.analysisResults = null;
+    clearRegions();
+
+    // Clear canvas placeholder
+    if (documentCanvas && canvasCtx) {
+      documentCanvas.width = 900;
+      documentCanvas.height = 600;
+      canvasCtx.fillStyle = '#f8fafc';
+      canvasCtx.fillRect(0, 0, 900, 600);
+      canvasCtx.font = '600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      canvasCtx.fillStyle = '#94a3b8';
+      canvasCtx.textAlign = 'center';
+      canvasCtx.fillText('No Document Loaded — Drop file or click Scan / Upload', 450, 300);
+    }
+
+    // Active doc HUD
+    if (hudDocName) hudDocName.textContent = 'No document loaded';
+    if (hudDocId) hudDocId.textContent = '--';
+    if (hudDocHash) {
+      hudDocHash.textContent = '--';
+      hudDocHash.title = '';
+    }
+    if (hudDocDim) hudDocDim.textContent = '--';
+    if (hudDocStatus) {
+      hudDocStatus.innerHTML = '<span class="hud-status-dot"></span><span>AWAITING UPLOAD</span>';
+    }
+    if (modeBadge) {
+      modeBadge.className = 'mode-badge empty';
+      if (modeBadgeText) modeBadgeText.textContent = 'AWAITING DOCUMENT';
+    }
+
+    // HUD Panel
+    if (latencyTag) latencyTag.textContent = '--ms';
+    if (qualityBanner) qualityBanner.style.display = 'none';
+    if (riskVerdictBadge) {
+      riskVerdictBadge.textContent = 'AWAITING DOCUMENT';
+      riskVerdictBadge.className = 'risk-badge verdict-neutral';
+    }
+    if (riskScoreNumber) {
+      riskScoreNumber.textContent = '--';
+      riskScoreNumber.style.color = 'var(--text-primary)';
+    }
+    if (whyTagsRow) {
+      whyTagsRow.innerHTML = '<span class="why-tag empty-tag">Awaiting document analysis</span>';
+    }
+    if (evidenceRows) {
+      evidenceRows.innerHTML = '<div class="empty-evidence-hint">Upload or scan a document to perform forensic verification.</div>';
+    }
+    if (disclaimerBox) disclaimerBox.style.display = 'none';
+
+    // Inspector
+    if (inspectorTitle) inspectorTitle.textContent = 'No Region Selected';
+    if (inspectorConfidence) {
+      inspectorConfidence.textContent = 'Confidence: --';
+      inspectorConfidence.style.color = 'var(--text-muted)';
+    }
+    if (inspectorBody) {
+      inspectorBody.textContent = 'Upload or select a document to inspect forensic evidence.';
+    }
+    if (inspectorMath) {
+      inspectorMath.textContent = 'Status: Awaiting Document';
+    }
+
+    // Risk Explorer Bars: strictly 0 pts and 0%
+    const barList = [
+      { pts: barPtsClone, fill: barFillClone },
+      { pts: barPtsEla, fill: barFillEla },
+      { pts: barPtsNoise, fill: barFillNoise },
+      { pts: barPtsFont, fill: barFillFont },
+      { pts: barPtsLogic, fill: barFillLogic },
+      { pts: barPtsMeta, fill: barFillMeta }
+    ];
+    barList.forEach(b => {
+      if (b.pts) b.pts.textContent = '0 pts';
+      if (b.fill) {
+        b.fill.style.width = '0%';
+        b.fill.className = 'bar-fill';
+      }
+    });
+
+    // 4 Operations Validation Matrix Cards: neutral ready state
+    [
+      { card: opCard1, status: opStatus1, metric: opMetric1 },
+      { card: opCard2, status: opStatus2, metric: opMetric2 },
+      { card: opCard3, status: opStatus3, metric: opMetric3 },
+      { card: opCard4, status: opStatus4, metric: opMetric4 }
+    ].forEach((op, idx) => {
+      if (op.card) op.card.className = `operation-card${state.selectedOperation === idx + 1 ? ' selected-op' : ''}`;
+      if (op.status) {
+        op.status.className = 'op-status-pill';
+        op.status.textContent = 'READY';
+      }
+      if (op.metric) {
+        op.metric.textContent = 'Awaiting document scan';
+      }
+    });
+
+    // What Changed Card
+    if (whatChangedCard && diffRows) {
+      diffRows.innerHTML = `
+        <div class="diff-row">
+          <span style="font-weight:600; color:var(--text-muted);">Inspection State</span>
+          <span style="color:var(--text-muted);">AWAITING DOCUMENT SCAN</span>
+        </div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
+          Upload or capture a financial document to execute forensic comparison.
+        </div>
+      `;
+    }
+  }
+
+  // ========================================================================
+  // DRAG AND DROP FILE INGESTION SUPPORT
+  // ========================================================================
+  const dropTargets = [
+    document.getElementById('viewfinderWrapper'),
+    document.getElementById('scannerSection'),
+    document.getElementById('workspace')
+  ].filter(Boolean);
+
+  dropTargets.forEach(target => {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      target.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      target.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+
+    target.addEventListener('drop', async (e) => {
+      const dt = e.dataTransfer;
+      const file = dt && dt.files && dt.files[0];
+      if (file && (file.type.startsWith('image/') || file.name.endsWith('.pdf'))) {
+        const arrayBuffer = await file.arrayBuffer();
+        const blobUrl = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          setActiveDocument({
+            name: file.name,
+            imageObject: img,
+            arrayBuffer: arrayBuffer,
+            file: file,
+            isBenchmark: false
+          });
+          router.navigate('lab');
+          URL.revokeObjectURL(blobUrl);
+        };
+        img.src = blobUrl;
+      }
+    });
+  });
+
+  // ========================================================================
+  // APPLICATION STARTUP: CLEAN EMPTY STATE (No fake initial scores)
+  // ========================================================================
+  renderEmptyState();
 });

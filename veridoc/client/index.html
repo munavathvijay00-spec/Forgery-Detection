@@ -349,24 +349,30 @@
           <div class="doc-hud-items">
             <div class="doc-hud-item">
               <span class="doc-hud-label">Active Document</span>
-              <span class="doc-hud-val" id="hudDocName">sample_1_authentic.png</span>
+              <span class="doc-hud-val" id="hudDocName">No document loaded</span>
             </div>
             <div class="doc-hud-item">
               <span class="doc-hud-label">Document ID</span>
-              <span class="doc-hud-val mono" id="hudDocId">DOC-INIT</span>
+              <span class="doc-hud-val mono" id="hudDocId">--</span>
             </div>
             <div class="doc-hud-item">
               <span class="doc-hud-label">SHA-256 Fingerprint</span>
-              <span class="doc-hud-val mono" id="hudDocHash">Computing...</span>
+              <span class="doc-hud-val mono" id="hudDocHash">--</span>
             </div>
             <div class="doc-hud-item">
               <span class="doc-hud-label">Resolution</span>
-              <span class="doc-hud-val" id="hudDocDim">900 × 1200 px</span>
+              <span class="doc-hud-val" id="hudDocDim">--</span>
             </div>
           </div>
-          <div class="doc-hud-badge" id="hudDocStatus">
-            <span class="hud-status-dot"></span>
-            <span>IMAGE LOCKED IN STATE</span>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <div class="mode-badge empty" id="modeBadge">
+              <span class="mode-badge-dot"></span>
+              <span id="modeBadgeText">AWAITING DOCUMENT</span>
+            </div>
+            <div class="doc-hud-badge" id="hudDocStatus">
+              <span class="hud-status-dot"></span>
+              <span>AWAITING UPLOAD</span>
+            </div>
           </div>
         </div>
 
@@ -439,11 +445,11 @@
         <div>
           <div class="hud-header">
             <span class="hud-title">Forensic Audit Result</span>
-            <span class="hud-latency" id="latencyTag">Local: 72ms</span>
+            <span class="hud-latency" id="latencyTag">--ms</span>
           </div>
 
           <!-- Image Quality Pre-Check Banner (Section 12) -->
-          <div class="quality-status-banner quality-ok" id="qualityBanner">
+          <div class="quality-status-banner quality-ok" id="qualityBanner" style="display:none;">
             <span id="qualityText">Image Quality: Optimal (Resolution & Sharpness Verified)</span>
             <span id="qualityIcon" style="font-size:0.9rem;">✓</span>
           </div>
@@ -451,9 +457,9 @@
           <!-- Primary Classification & Risk Score (Section 12, 13, 17) -->
           <div class="score-display-box">
             <div class="score-classification-label">Classification</div>
-            <div class="risk-badge verdict-forged" id="riskVerdictBadge">LIKELY FORGED</div>
+            <div class="risk-badge verdict-neutral" id="riskVerdictBadge">AWAITING DOCUMENT</div>
             <div class="score-main-group">
-              <span class="risk-number-large" id="riskScoreNumber">84</span>
+              <span class="risk-number-large" id="riskScoreNumber">--</span>
               <span class="risk-denom">/ 100</span>
             </div>
             <div class="score-sub-label">Calculated Forgery Risk</div>
@@ -466,8 +472,7 @@
               <span>Why this result? (Key Detected Indicators)</span>
             </div>
             <div class="why-tags-row" id="whyTagsRow">
-              <span class="why-tag">Amount Field Splicing</span>
-              <span class="why-tag">Cloned Stamp NCC</span>
+              <span class="why-tag empty-tag">Awaiting document analysis</span>
             </div>
           </div>
 
@@ -478,7 +483,7 @@
               <span>Risk Contribution</span>
             </div>
             <div id="evidenceRows">
-              <!-- Populated dynamically from actual mathematical signals -->
+              <div class="empty-evidence-hint">Upload or scan a document to perform forensic verification.</div>
             </div>
           </div>
 
@@ -490,14 +495,14 @@
           <!-- Interactive Evidence Inspector Card (Section 7: Why is this suspicious?) -->
           <div class="inspector-box" id="regionInspector">
             <div class="inspector-box-header">
-              <strong id="inspectorTitle">Why is this suspicious?</strong>
-              <span id="inspectorConfidence">Confidence: 94%</span>
+              <strong id="inspectorTitle">No Region Selected</strong>
+              <span id="inspectorConfidence">Confidence: --</span>
             </div>
             <p id="inspectorBody">
-              Tap any highlighted box on the document to view detailed evidence.
+              Upload or select a document to inspect forensic evidence.
             </p>
             <div id="inspectorMath">
-              N-ELA Ratio: 3.8x | Substrate Noise: +140%
+              Status: Awaiting Document
             </div>
           </div>
         </div>
@@ -612,10 +617,10 @@
           <div class="risk-bar-row">
             <div class="bar-header">
               <span>Clone & Duplicate Detection (NCC)</span>
-              <strong id="barPtsClone">+25 pts</strong>
+              <strong id="barPtsClone">0 pts</strong>
             </div>
             <div class="bar-track">
-              <div class="bar-fill danger" id="barFillClone" style="width: 100%;"></div>
+              <div class="bar-fill" id="barFillClone" style="width: 0%;"></div>
             </div>
             <div class="bar-note">2D Normalized Cross-Correlation detected identical executive seal duplication (γ ≥ 0.88).</div>
           </div>
@@ -623,10 +628,10 @@
           <div class="risk-bar-row">
             <div class="bar-header">
               <span>Compression Anomaly (N-ELA)</span>
-              <strong id="barPtsEla">+20 pts</strong>
+              <strong id="barPtsEla">0 pts</strong>
             </div>
             <div class="bar-track">
-              <div class="bar-fill danger" id="barFillEla" style="width: 80%;"></div>
+              <div class="bar-fill" id="barFillEla" style="width: 0%;"></div>
             </div>
             <div class="bar-note">82% JPEG re-quantization exposed differential compression history on modified digits.</div>
           </div>
@@ -634,10 +639,10 @@
           <div class="risk-bar-row">
             <div class="bar-header">
               <span>Substrate Laplacian Noise Variance</span>
-              <strong id="barPtsNoise">+22 pts</strong>
+              <strong id="barPtsNoise">0 pts</strong>
             </div>
             <div class="bar-track">
-              <div class="bar-fill danger" id="barFillNoise" style="width: 88%;"></div>
+              <div class="bar-fill" id="barFillNoise" style="width: 0%;"></div>
             </div>
             <div class="bar-note">High-pass 3x3 discrete kernel revealed digital anti-aliasing discontinuity vs paper grain.</div>
           </div>
@@ -645,10 +650,10 @@
           <div class="risk-bar-row">
             <div class="bar-header">
               <span>Typographical Baseline Drift (Δy)</span>
-              <strong id="barPtsFont">+12 pts</strong>
+              <strong id="barPtsFont">0 pts</strong>
             </div>
             <div class="bar-track">
-              <div class="bar-fill warning" id="barFillFont" style="width: 48%;"></div>
+              <div class="bar-fill" id="barFillFont" style="width: 0%;"></div>
             </div>
             <div class="bar-note">Horizontal projection line regression indicated foreign font stroke thickness jitter.</div>
           </div>
@@ -656,10 +661,10 @@
           <div class="risk-bar-row">
             <div class="bar-header">
               <span>Financial Ledger Arithmetic Logic</span>
-              <strong id="barPtsLogic">+3 pts</strong>
+              <strong id="barPtsLogic">0 pts</strong>
             </div>
             <div class="bar-track">
-              <div class="bar-fill success" id="barFillLogic" style="width: 12%;"></div>
+              <div class="bar-fill" id="barFillLogic" style="width: 0%;"></div>
             </div>
             <div class="bar-note">Opening balance + credits - debits checksum balance verification.</div>
           </div>
@@ -667,10 +672,10 @@
           <div class="risk-bar-row">
             <div class="bar-header">
               <span>Container & EXIF Signatures</span>
-              <strong id="barPtsMeta">+2 pts</strong>
+              <strong id="barPtsMeta">0 pts</strong>
             </div>
             <div class="bar-track">
-              <div class="bar-fill success" id="barFillMeta" style="width: 8%;"></div>
+              <div class="bar-fill" id="barFillMeta" style="width: 0%;"></div>
             </div>
             <div class="bar-note">Header parsing for editing tool traces (Photoshop, Canva, GIMP). Supporting only.</div>
           </div>
@@ -982,11 +987,11 @@
       <div class="cert-details-list">
         <div class="cert-row">
           <span>Document ID</span>
-          <strong id="certDocId" class="mono">DOC-9182-AEGIS</strong>
+          <strong id="certDocId" class="mono">--</strong>
         </div>
         <div class="cert-row">
           <span>Scan Timestamp</span>
-          <strong id="certTimestamp" class="mono">13-SEP-2026 UTC</strong>
+          <strong id="certTimestamp" class="mono">--</strong>
         </div>
         <div class="cert-row">
           <span>Execution Enclave</span>
@@ -994,16 +999,16 @@
         </div>
         <div class="cert-row">
           <span>Inference Latency</span>
-          <strong id="certLatency" class="mono">72ms</strong>
+          <strong id="certLatency" class="mono">--ms</strong>
         </div>
         <div class="cert-row">
           <span>Calculated Forgery Risk</span>
-          <strong id="certRiskScore" style="color:var(--color-danger); font-size:1rem;">84 / 100 (LIKELY FORGED)</strong>
+          <strong id="certRiskScore" style="color:var(--text-primary); font-size:1rem;">-- / 100 (AWAITING SCAN)</strong>
         </div>
       </div>
 
       <div id="certRationaleText" class="cert-rationale-box">
-        Primary Finding: Error Level Analysis recompression delta exceeds ambient baseline by 3.8x, indicating spliced monetary balance.
+        Awaiting document forensic analysis.
       </div>
 
       <div class="cert-footer-actions">

@@ -2494,3 +2494,60 @@ body {
   stroke: var(--color-primary);
 }
 
+/* ==========================================================================
+   MODE BADGE & EMPTY STATE ENHANCEMENTS
+   ========================================================================== */
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+.mode-badge.empty {
+  background: #f1f5f9;
+  color: var(--text-muted);
+  border-color: #cbd5e1;
+}
+.mode-badge.real {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.mode-badge.demo {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.mode-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+.risk-badge.verdict-neutral {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+.empty-evidence-hint {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.why-tag.empty-tag {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-color: #e2e8f0;
+}
+
