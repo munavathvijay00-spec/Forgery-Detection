@@ -38,11 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('fileInput');
   const cameraBtn = document.getElementById('cameraBtn');
   const cameraBtnText = document.getElementById('cameraBtnText');
+  const cameraNativeBtn = document.getElementById('cameraNativeBtn');
   const cameraNativeInput = document.getElementById('cameraNativeInput');
+  const labCameraBtn = document.getElementById('labCameraBtn');
+  const cameraShutterBar = document.getElementById('cameraShutterBar');
+  const cameraSnapBtn = document.getElementById('cameraSnapBtn');
+  const cameraFlipBtn = document.getElementById('cameraFlipBtn');
+  const cameraCloseBtn = document.getElementById('cameraCloseBtn');
   const benchmarkSelect = document.getElementById('benchmarkSelect');
   const runAnalysisBtn = document.getElementById('runAnalysisBtn');
   const viewNormalBtn = document.getElementById('viewNormalBtn');
   const viewElaBtn = document.getElementById('viewElaBtn');
+
+  let currentFacingMode = 'environment';
 
   // Active Document HUD Elements
   const hudDocName = document.getElementById('hudDocName');
@@ -1132,41 +1140,147 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (cameraBtn) {
-    cameraBtn.addEventListener('click', toggleCamera);
+  // ========================================================================
+  // CAMERA INGESTION PIPELINE (Mobile Native Camera & Live WebRTC Viewfinder)
+  // ========================================================================
+
+  // 1. Direct Native Device Camera (Synchronous user gesture - 100% reliable on mobile OS)
+  if (cameraNativeBtn && cameraNativeInput) {
+    cameraNativeBtn.addEventListener('click', () => {
+      cameraNativeInput.click();
+    });
   }
 
-  async function toggleCamera() {
-    if (isCameraActive) {
+  // 2. Live In-Browser Viewfinder Button on Scan Page
+  if (cameraBtn) {
+    cameraBtn.addEventListener('click', () => {
+      if (isCameraActive) {
+        captureCameraFrame();
+        stopCamera();
+      } else {
+        openLiveCamera();
+      }
+    });
+  }
+
+  // 3. Live Camera Button on Forensic Lab Page
+  if (labCameraBtn) {
+    labCameraBtn.addEventListener('click', () => {
+      if (isCameraActive) {
+        captureCameraFrame();
+        stopCamera();
+      } else {
+        openLiveCamera();
+      }
+    });
+  }
+
+  // 4. In-Viewfinder Floating Shutter Controls
+  if (cameraSnapBtn) {
+    cameraSnapBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       captureCameraFrame();
       stopCamera();
+    });
+  }
+
+  if (cameraFlipBtn) {
+    cameraFlipBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      isCameraActive = false;
+      await openLiveCamera();
+    });
+  }
+
+  if (cameraCloseBtn) {
+    cameraCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      stopCamera();
+    });
+  }
+
+  async function openLiveCamera() {
+    // Navigate immediately to Forensic Lab so viewfinder is in active viewport
+    router.navigate('lab');
+
+    // Check secure context and WebRTC support
+    const isSecure = window.isSecureContext || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+    if (!isSecure || !hasMedia) {
+      showToast('Live stream requires HTTPS. Opening high-resolution mobile camera...', 3500);
+      if (cameraNativeInput) {
+        cameraNativeInput.click();
+      }
       return;
     }
 
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    try {
+      showToast('Opening camera viewfinder...', 2000);
+      let stream = null;
+
+      // Attempt ideal constraints first
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment', width: { ideal: 1280 } }
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: currentFacingMode },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
         });
-        cameraStream = stream;
-        if (cameraVideo) {
-          cameraVideo.srcObject = stream;
-          cameraVideo.style.display = 'block';
+      } catch (err1) {
+        console.warn('First getUserMedia constraint failed, attempting facingMode string fallback:', err1);
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: currentFacingMode },
+            audio: false
+          });
+        } catch (err2) {
+          console.warn('Second constraint failed, attempting general video stream:', err2);
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+          });
         }
-        if (documentCanvas) documentCanvas.style.display = 'none';
-        if (cameraGuidelines) cameraGuidelines.style.display = 'block';
-        clearRegions();
-
-        isCameraActive = true;
-        if (cameraBtnText) cameraBtnText.textContent = 'Capture Frame';
-        return;
-      } catch (err) {
-        console.warn('Live stream unavailable, using native camera fallback:', err);
       }
-    }
 
-    if (cameraNativeInput) {
-      cameraNativeInput.click();
+      cameraStream = stream;
+      if (cameraVideo) {
+        cameraVideo.srcObject = stream;
+        cameraVideo.setAttribute('playsinline', '');
+        cameraVideo.setAttribute('autoplay', '');
+        cameraVideo.muted = true;
+        cameraVideo.style.display = 'block';
+        try {
+          await cameraVideo.play();
+        } catch (playErr) {
+          console.warn('cameraVideo.play() note:', playErr);
+        }
+      }
+
+      if (documentCanvas) documentCanvas.style.display = 'none';
+      if (cameraGuidelines) cameraGuidelines.style.display = 'flex';
+      if (cameraShutterBar) cameraShutterBar.style.display = 'flex';
+      if (regionLayer) regionLayer.style.display = 'none';
+      clearRegions();
+
+      isCameraActive = true;
+      if (cameraBtnText) cameraBtnText.textContent = 'Capture Frame';
+      showToast('📸 Align document inside frame and tap white shutter to snap', 4000);
+
+    } catch (err) {
+      console.warn('Live camera stream error:', err);
+      showToast('Camera access blocked or unavailable. Opening device camera...', 3500);
+      stopCamera();
+      if (cameraNativeInput) {
+        cameraNativeInput.click();
+      }
     }
   }
 
@@ -1195,9 +1309,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function captureCameraFrame() {
     if (!cameraVideo || !documentCanvas || !canvasCtx) return;
-    documentCanvas.width = cameraVideo.videoWidth || 900;
-    documentCanvas.height = cameraVideo.videoHeight || 1200;
-    canvasCtx.drawImage(cameraVideo, 0, 0, documentCanvas.width, documentCanvas.height);
+    const vWidth = cameraVideo.videoWidth || 900;
+    const vHeight = cameraVideo.videoHeight || 1200;
+    documentCanvas.width = vWidth;
+    documentCanvas.height = vHeight;
+    canvasCtx.drawImage(cameraVideo, 0, 0, vWidth, vHeight);
 
     documentCanvas.toBlob(async (blob) => {
       if (!blob) return;
@@ -1206,7 +1322,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const snap = new Image();
       snap.onload = () => {
         setActiveDocument({
-          name: 'Camera Capture ' + new Date().toLocaleTimeString(),
+          name: 'Camera Scan ' + new Date().toLocaleTimeString(),
           imageObject: snap,
           arrayBuffer: arrayBuffer,
           file: null,
@@ -1216,7 +1332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(blobUrl);
       };
       snap.src = blobUrl;
-    }, 'image/jpeg', 0.92);
+    }, 'image/jpeg', 0.95);
   }
 
   function stopCamera() {
@@ -1225,10 +1341,14 @@ document.addEventListener('DOMContentLoaded', () => {
       cameraStream = null;
     }
     isCameraActive = false;
-    if (cameraVideo) cameraVideo.style.display = 'none';
+    if (cameraVideo) {
+      cameraVideo.srcObject = null;
+      cameraVideo.style.display = 'none';
+    }
     if (documentCanvas) documentCanvas.style.display = 'block';
     if (cameraGuidelines) cameraGuidelines.style.display = 'none';
-    if (cameraBtnText) cameraBtnText.textContent = 'Open Live Camera';
+    if (cameraShutterBar) cameraShutterBar.style.display = 'none';
+    if (cameraBtnText) cameraBtnText.textContent = 'Live Viewfinder';
   }
 
   // Benchmark Synthetic Demo Selector (Section 30: Hackathon Demo)
