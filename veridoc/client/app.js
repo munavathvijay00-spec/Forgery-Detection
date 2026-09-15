@@ -1076,10 +1076,13 @@ document.addEventListener('DOMContentLoaded', () => {
       box.style.top = `${r.y * scaleY}px`;
       box.style.width = `${r.width * scaleX}px`;
       box.style.height = `${r.height * scaleY}px`;
-      box.innerHTML = `<span class="box-tag">#${idx + 1} ${r.source}</span>`;
+      box.innerHTML = `
+        <span class="region-num-badge">${idx + 1}</span>
+        <span class="box-tag">EVIDENCE 0${idx + 1}: ${r.source}</span>
+      `;
 
       box.addEventListener('click', () => {
-        selectRegion(r);
+        selectRegion(r, idx + 1);
         bridge.sendRemoteCommand('spotlight_region', r.id);
       });
 
@@ -1087,26 +1090,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function selectRegion(region) {
-    document.querySelectorAll('.suspicious-box').forEach(b => b.classList.remove('selected'));
+  function selectRegion(region, idx = 1) {
+    document.querySelectorAll('.suspicious-box').forEach(b => b.classList.remove('selected', 'focused'));
     const activeBox = document.getElementById(`box_${region.id}`);
-    if (activeBox) activeBox.classList.add('selected');
+    if (activeBox) activeBox.classList.add('selected', 'focused');
 
     if (regionInspector) {
       regionInspector.style.display = 'block';
-      if (inspectorTitle) inspectorTitle.textContent = `Why is this suspicious? (${region.signal || region.source})`;
+      if (inspectorTitle) inspectorTitle.textContent = `EVIDENCE 0${idx}: ${region.signal || region.source}`;
       if (inspectorConfidence) {
-        inspectorConfidence.textContent = `Confidence: ${Math.round((region.confidence || 0.92) * 100)}%`;
+        inspectorConfidence.textContent = `SEVERITY: HIGH (${Math.round((region.confidence || 0.92) * 100)}% Confidence)`;
         inspectorConfidence.style.color = 'var(--color-danger)';
       }
       if (inspectorBody) inspectorBody.textContent = region.explanation;
-      if (inspectorMath) inspectorMath.textContent = `Coordinates: [x:${region.x}, y:${region.y}, w:${region.width}, h:${region.height}] · Severity: ${region.severityScore || 80}/100`;
+      if (inspectorMath) inspectorMath.textContent = `Location: [x:${region.x}, y:${region.y}, w:${region.width}, h:${region.height}] · Risk Contribution: +${region.severityScore || 18} pts`;
     }
   }
 
   function clearRegions() {
     if (regionLayer) regionLayer.innerHTML = '';
     if (regionInspector) regionInspector.style.display = 'none';
+  }
+
+  // Forensic Lab Precision Zoom & Pan Controls
+  let currentZoom = 1.0;
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+  function applyCanvasZoom(scale) {
+    currentZoom = Math.max(0.5, Math.min(3.0, scale));
+    if (documentCanvas) {
+      documentCanvas.style.transform = `scale(${currentZoom})`;
+      documentCanvas.style.transformOrigin = 'top left';
+    }
+    if (regionLayer) {
+      regionLayer.style.transform = `scale(${currentZoom})`;
+      regionLayer.style.transformOrigin = 'top left';
+    }
+    if (zoomResetBtn) {
+      zoomResetBtn.textContent = `${Math.round(currentZoom * 100)}%`;
+    }
+  }
+
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener('click', () => applyCanvasZoom(currentZoom + 0.25));
+  }
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener('click', () => applyCanvasZoom(currentZoom - 0.25));
+  }
+  if (zoomResetBtn) {
+    zoomResetBtn.addEventListener('click', () => applyCanvasZoom(1.0));
   }
 
   // Auto-rescale bounding boxes on mobile screen rotation / viewport resize
