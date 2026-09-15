@@ -601,6 +601,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'scanner': 'scan',
         'scannerSection': 'scan',
         'lab': 'lab',
+        'forensics': 'lab',
+        'forensic': 'lab',
+        'forensic-lab': 'lab',
         'workspace': 'lab',
         'results': 'lab',
         'matrix': 'lab',
@@ -615,7 +618,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'tech': 'technology',
         'privacy': 'privacy',
         'privacy-center': 'privacy',
-        'history': 'history'
+        'history': 'history',
+        'ledger': 'history'
       };
 
       this.currentRoute = 'home';
@@ -1781,6 +1785,108 @@ document.addEventListener('DOMContentLoaded', () => {
       updateSliderPosition(e.clientX);
     });
   }
+
+  // ========================================================================
+  // INTERACTIVE HERO FORENSIC HOTSPOTS DEMO
+  // ========================================================================
+  const heroHotspotsData = {
+    amount: {
+      box: { top: '48%', right: '14%', left: 'auto', width: '130px', height: '38px' },
+      pill: 'Op 2: N-ELA Spike 3.8x (Altered Amount)',
+      badge: 'Suspicious Region: Amount Field',
+      pts: '+18 pts Risk',
+      desc: 'Local visual/compression inconsistency detected. Normalized ELA recompression error is 3.8x higher than ambient baseline, indicating spliced numeric characters.'
+    },
+    typography: {
+      box: { top: '34%', left: '26%', right: 'auto', width: '150px', height: '34px' },
+      pill: 'Op 3: Font Metrics Anomaly',
+      badge: 'Suspicious Region: Typography Inconsistency',
+      pts: '+12 pts Risk',
+      desc: 'Glyph antialiasing curve, character kerning, and stroke rasterization profile deviate from the authentic template baseline.'
+    },
+    checksum: {
+      box: { top: '68%', left: '16%', right: 'auto', width: '170px', height: '36px' },
+      pill: 'Op 4: Checksum Arithmetic Mismatch',
+      badge: 'Suspicious Region: Document Structure',
+      pts: '+15 pts Risk',
+      desc: 'Arithmetic reconciliation failure: Opening balance + credit line items - debit transactions does not equal the spliced closing balance.'
+    }
+  };
+
+  function activateHeroHotspot(key) {
+    const data = heroHotspotsData[key];
+    if (!data) return;
+
+    // Update hotspots active state
+    document.querySelectorAll('.hero-hotspot').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('data-spot') === key);
+    });
+
+    // Update tabs active state
+    document.querySelectorAll('.h-tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-spot-btn') === key);
+    });
+
+    // Update marker box
+    const markerBox = document.getElementById('heroMarkerBox');
+    const markerPill = document.getElementById('heroMarkerPill');
+    if (markerBox && markerPill) {
+      markerBox.style.top = data.box.top;
+      markerBox.style.right = data.box.right;
+      markerBox.style.left = data.box.left;
+      markerBox.style.width = data.box.width;
+      markerBox.style.height = data.box.height;
+      markerPill.textContent = data.pill;
+    }
+
+    // Update evidence card
+    const hBadge = document.getElementById('hEvidenceBadge');
+    const hPoints = document.getElementById('hEvidencePoints');
+    const hDesc = document.getElementById('hEvidenceDesc');
+    if (hBadge) hBadge.textContent = data.badge;
+    if (hPoints) hPoints.textContent = data.pts;
+    if (hDesc) hDesc.textContent = data.desc;
+  }
+
+  document.querySelectorAll('.hero-hotspot').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const spotKey = el.getAttribute('data-spot');
+      activateHeroHotspot(spotKey);
+    });
+  });
+
+  document.querySelectorAll('.h-tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const spotKey = btn.getAttribute('data-spot-btn');
+      activateHeroHotspot(spotKey);
+    });
+  });
+
+  // ========================================================================
+  // PIPELINE ACCORDION INTERACTIVITY
+  // ========================================================================
+  document.querySelectorAll('.pipeline-stage-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const isAlreadyActive = item.classList.contains('active');
+      document.querySelectorAll('.pipeline-stage-item').forEach(other => {
+        other.classList.remove('active');
+        const body = other.querySelector('.psi-body');
+        const chevron = other.querySelector('.psi-chevron');
+        if (body) body.style.display = 'none';
+        if (chevron) chevron.textContent = '▸';
+      });
+
+      if (!isAlreadyActive) {
+        item.classList.add('active');
+        const body = item.querySelector('.psi-body');
+        const chevron = item.querySelector('.psi-chevron');
+        if (body) body.style.display = 'block';
+        if (chevron) chevron.textContent = '▾';
+      }
+    });
+  });
 
   // ========================================================================
   // TAMPER CHALLENGE GAME

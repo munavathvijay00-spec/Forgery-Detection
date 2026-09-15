@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=3.6.0">
+  <link rel="stylesheet" href="styles.css?v=3.8.0">
 </head>
 <body>
 
@@ -159,7 +159,7 @@
        PAGE 1: HOME (Hero & Interactive Challenge)
        ======================================================================== -->
   <div class="app-page active-page" id="page-home" data-page="home">
-    <!-- SECTION 1: LANDING PAGE HERO (Section 4) -->
+    <!-- SECTION 1: LANDING PAGE HERO -->
     <section class="landing-hero" id="landing">
       <div class="container hero-layout">
         <div class="hero-content">
@@ -171,7 +171,7 @@
             Can You Trust <br>This Document?
           </h1>
           <p class="hero-subtext">
-            Analyze financial documents for signs of tampering, manipulation, and digital inconsistencies — with fully explainable mathematical evidence.
+            Analyze financial documents for signs of tampering, manipulation, and digital inconsistencies — with explainable forensic evidence behind every result.
           </p>
 
           <div class="hero-cta-group">
@@ -187,113 +187,468 @@
             </a>
           </div>
 
-        <!-- Trust Indicators Bar (Section 5) -->
-        <div class="trust-grid">
-          <div class="trust-item">
-            <div class="trust-icon">🔒</div>
-            <div class="trust-title">On-Device</div>
-            <div class="trust-desc">Analysis designed to keep sensitive documents local in hardware memory.</div>
+          <!-- Four Refined Capability Cards -->
+          <div class="trust-grid">
+            <div class="trust-item">
+              <div class="trust-icon">🔒</div>
+              <div class="trust-title">ON-DEVICE</div>
+              <div class="trust-desc">Analysis designed to keep sensitive document processing local where supported.</div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">🛡️</div>
+              <div class="trust-title">PRIVACY-FIRST</div>
+              <div class="trust-desc">Minimize unnecessary transmission of sensitive financial documents.</div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">📊</div>
+              <div class="trust-title">EXPLAINABLE</div>
+              <div class="trust-desc">Every result is supported by observable forensic evidence.</div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">🔬</div>
+              <div class="trust-title">MULTI-FORENSIC</div>
+              <div class="trust-desc">Correlates independent signals including compression, noise, clone detection, typography, and document structure.</div>
+            </div>
           </div>
-          <div class="trust-item">
-            <div class="trust-icon">🛡️</div>
-            <div class="trust-title">Privacy-First</div>
-            <div class="trust-desc">Zero cloud upload. Complete biometric & banking data isolation.</div>
-          </div>
-          <div class="trust-item">
-            <div class="trust-icon">📊</div>
-            <div class="trust-title">Explainable</div>
-            <div class="trust-desc">Shows exact pixel-level evidence and mathematical variance behind every result.</div>
-          </div>
-          <div class="trust-item">
-            <div class="trust-icon">🔬</div>
-            <div class="trust-title">Multi-Forensic</div>
-            <div class="trust-desc">Correlates 6 orthogonal signals: ELA, Laplacian noise, NCC clone & typography.</div>
+        </div>
+
+        <!-- Hero Visual: Interactive Mini Forensic Demonstration Document -->
+        <div class="hero-visual">
+          <div class="hero-doc-card">
+            <div class="hero-showcase-badge">
+              <span class="badge-dot"></span>
+              <span>CONTROLLED BENCHMARK SAMPLE</span>
+            </div>
+            <div class="hero-doc-header">
+              <span class="doc-mock-title">BENCHMARK: SPLICED BALANCE DEMO</span>
+              <span class="doc-mock-status flagged">FLAGGED: ALTERED AMOUNT</span>
+            </div>
+            <div class="hero-doc-preview" id="heroDocPreview">
+              <img src="samples/sample_2_amount_forged.png" alt="Forensic Sample Document" class="hero-doc-img" id="heroDocImg">
+              <div class="hero-scan-line"></div>
+              
+              <!-- Interactive Evidence Hotspots -->
+              <div class="hero-hotspot active" id="hotspotAmount" style="top: 54%; left: 66%;" data-spot="amount" title="Click to view evidence">
+                <span class="hotspot-pulse"></span>
+                <span class="hotspot-pin">1</span>
+              </div>
+              <div class="hero-hotspot" id="hotspotTypography" style="top: 40%; left: 34%;" data-spot="typography" title="Click to view evidence">
+                <span class="hotspot-pulse"></span>
+                <span class="hotspot-pin">2</span>
+              </div>
+              <div class="hero-hotspot" id="hotspotChecksum" style="top: 74%; left: 22%;" data-spot="checksum" title="Click to view evidence">
+                <span class="hotspot-pulse"></span>
+                <span class="hotspot-pin">3</span>
+              </div>
+
+              <!-- Live Hotspot Overlay Box -->
+              <div class="hero-marker-box" id="heroMarkerBox">
+                <span class="marker-pill" id="heroMarkerPill">Op 2: N-ELA Spike 3.8x (Altered Amount)</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Hotspot Evidence Card -->
+            <div class="hero-hotspot-evidence" id="heroHotspotEvidence">
+              <div class="h-evidence-header">
+                <span class="h-evidence-badge" id="hEvidenceBadge">Suspicious Region: Amount Field</span>
+                <span class="h-evidence-points" id="hEvidencePoints">+18 pts Risk</span>
+              </div>
+              <p class="h-evidence-desc" id="hEvidenceDesc">
+                Local visual/compression inconsistency detected. Normalized ELA recompression error is 3.8x higher than ambient baseline, indicating spliced numeric characters.
+              </p>
+              <div class="h-evidence-tabs">
+                <button type="button" class="h-tab-btn active" data-spot-btn="amount">1. Amount Field (+18)</button>
+                <button type="button" class="h-tab-btn" data-spot-btn="typography">2. Typography (+12)</button>
+                <button type="button" class="h-tab-btn" data-spot-btn="checksum">3. Checksum (+15)</button>
+              </div>
+            </div>
+
+            <div class="hero-doc-footer">
+              <div class="hero-metric">
+                <span class="m-label">Forgery Risk</span>
+                <span class="m-val danger">84 / 100</span>
+              </div>
+              <div class="hero-metric">
+                <span class="m-label">Verdict</span>
+                <span class="m-val danger">LIKELY FORGED</span>
+              </div>
+              <div class="hero-metric">
+                <span class="m-label">Execution</span>
+                <span class="m-val success">72ms (On-Device)</span>
+              </div>
+            </div>
+
+            <div class="hero-showcase-callout">
+              <span>💡 <strong>Synthetic forensic demo</strong> — not a user document. Tap pins above to inspect evidence.</span>
+              <a href="#/scan" class="hero-showcase-link" data-route="scan">Scan or upload your own document below ↓</a>
+            </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Hero Visual: Realistic Document with Scanline & Evidence Marker -->
-      <div class="hero-visual">
-        <div class="hero-doc-card">
-          <div class="hero-showcase-badge">
-            <span class="badge-dot"></span>
-            <span>CONTROLLED BENCHMARK SAMPLE: ALTERED AMOUNT DETECTION</span>
-          </div>
-          <div class="hero-doc-header">
-            <span class="doc-mock-title">SAMPLE 2: SPLICED BALANCE DEMO</span>
-            <span class="doc-mock-status flagged">FLAGGED: ALTERED AMOUNT</span>
-          </div>
-          <div class="hero-doc-preview">
-            <img src="samples/sample_2_amount_forged.png" alt="Document Under Forensic Scan" class="hero-doc-img">
-            <div class="hero-scan-line"></div>
-            <!-- Bounding Box Evidence Marker -->
-            <div class="hero-marker-box">
-              <span class="marker-pill">Op 2: N-ELA Spike 3.8x (Altered Amount)</span>
+    <!-- SECTION 2: "SEE WHAT THE SYSTEM DETECTS" INTERACTIVE SLIDER -->
+    <section class="challenge-section" id="challengeSection">
+      <div class="container">
+        <div class="section-heading text-center">
+          <span class="section-kicker">Interactive Forensic Proof</span>
+          <h2 class="section-title">See What the System Detects</h2>
+          <p class="section-subtitle">
+            Move the slider to compare the authentic financial statement with the manipulated version. Notice how the altered balance digit '9' is imperceptible to the human eye, but instantly exposed by on-device forensic analysis.
+          </p>
+        </div>
+
+        <div class="slider-container" id="comparisonSlider">
+          <div class="slider-image-wrapper">
+            <img src="samples/sample_2_amount_forged.png" alt="Manipulated Document" class="slider-img" id="sliderManipulated">
+            <img src="samples/sample_1_authentic.png" alt="Authentic Document" class="slider-img overlay" id="sliderAuthentic">
+            <div class="slider-handle" id="sliderHandle">
+              <div class="slider-handle-button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                  <polyline points="9 18 3 12 9 6"></polyline>
+                </svg>
+              </div>
             </div>
           </div>
-          <div class="hero-doc-footer">
-            <div class="hero-metric">
-              <span class="m-label">Forgery Risk</span>
-              <span class="m-val danger">84 / 100</span>
-            </div>
-            <div class="hero-metric">
-              <span class="m-label">Verdict</span>
-              <span class="m-val danger">LIKELY FORGED</span>
-            </div>
-            <div class="hero-metric">
-              <span class="m-label">Execution</span>
-              <span class="m-val success">72ms (On-Device)</span>
+          <div class="slider-footer-bar">
+            <span style="color:var(--color-success);">← Authentic Baseline (₹1,83,700.00)</span>
+            <span style="color:var(--color-danger);">Spliced Forgery (₹9,83,700.00) →</span>
+          </div>
+        </div>
+
+        <!-- Evidence Detected Grid -->
+        <div class="evidence-detected-grid">
+          <div class="evidence-pill-card">
+            <div class="ep-icon">⚠️</div>
+            <div class="ep-content">
+              <strong>Amount Anomaly</strong>
+              <p>Spliced digit ₹9,83,700 over ₹1,83,700 (+₹8,00,000 inflation) with 3.8x compression error spike.</p>
             </div>
           </div>
-          <div class="hero-showcase-callout">
-            <span>💡 <strong>Illustrative benchmark showcase</strong> demonstrating how AegisDoc catches altered monetary figures.</span>
-            <a href="#/scan" class="hero-showcase-link" data-route="scan">Scan or upload your own document below ↓</a>
+          <div class="evidence-pill-card">
+            <div class="ep-icon">🔍</div>
+            <div class="ep-content">
+              <strong>Pixel Inconsistency</strong>
+              <p>Localized high-pass Laplacian noise profile discontinuity in the numeric bounding box.</p>
+            </div>
+          </div>
+          <div class="evidence-pill-card">
+            <div class="ep-icon">📑</div>
+            <div class="ep-content">
+              <strong>Clone Detection</strong>
+              <p>Replicated background texture patch matching near the date header via 2D cross-correlation.</p>
+            </div>
+          </div>
+          <div class="evidence-pill-card">
+            <div class="ep-icon">🔤</div>
+            <div class="ep-content">
+              <strong>Typography Inconsistency</strong>
+              <p>Distinct antialiasing curve, character kerning deviation, and stroke weight delta on edited text.</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- SECTION 2: "CAN YOU SPOT THE FORGERY?" INTERACTIVE SLIDER (Section 6) -->
-  <section class="challenge-section" id="challengeSection">
-    <div class="container">
-      <div class="section-heading text-center">
-        <span class="section-kicker">Interactive Proof</span>
-        <h2 class="section-title">Can You Spot the Forgery?</h2>
-        <p class="section-subtitle">
-          Move the slider to compare the authentic statement against the manipulated version. Notice how the altered balance digit '9' is imperceptible to the human eye, but instantly exposed by on-device ELA recompression.
+    <!-- SECTION 3: "FROM EVIDENCE TO RISK" ARCHITECTURE FLOW -->
+    <section class="evidence-risk-section" id="evidenceRiskSection">
+      <div class="container">
+        <div class="section-heading text-center">
+          <span class="section-kicker">Explainable Decision Flow</span>
+          <h2 class="section-title">From Evidence to Risk</h2>
+          <p class="section-subtitle">
+            AegisDoc does not rely on opaque black-box guesses. Independent mathematical signals are correlated through an additive evidence engine to produce an explainable, auditable risk score.
+          </p>
+        </div>
+
+        <div class="risk-flow-container">
+          <!-- Step 1: Orthogonal Signals -->
+          <div class="risk-flow-signals">
+            <div class="flow-signal-card">
+              <div class="flow-sig-header">
+                <span class="flow-sig-name">Pixel Forensics (N-ELA)</span>
+                <span class="flow-sig-pts danger">+22 pts</span>
+              </div>
+              <span class="flow-sig-desc">Compression quantization variance across DCT blocks</span>
+            </div>
+            <div class="flow-plus">+</div>
+            <div class="flow-signal-card">
+              <div class="flow-sig-header">
+                <span class="flow-sig-name">Clone & Splice Detection</span>
+                <span class="flow-sig-pts danger">+25 pts</span>
+              </div>
+              <span class="flow-sig-desc">Normalized cross-correlation match of duplicated patches</span>
+            </div>
+            <div class="flow-plus">+</div>
+            <div class="flow-signal-card">
+              <div class="flow-sig-header">
+                <span class="flow-sig-name">Typography Analysis</span>
+                <span class="flow-sig-pts danger">+18 pts</span>
+              </div>
+              <span class="flow-sig-desc">Baseline alignment, font rasterization and stroke weight</span>
+            </div>
+            <div class="flow-plus">+</div>
+            <div class="flow-signal-card">
+              <div class="flow-sig-header">
+                <span class="flow-sig-name">Document Structure</span>
+                <span class="flow-sig-pts danger">+15 pts</span>
+              </div>
+              <span class="flow-sig-desc">Closing balance = Opening + Credits - Debits checksum</span>
+            </div>
+          </div>
+
+          <!-- Step 2: Correlation Engine Arrow -->
+          <div class="flow-arrow-row">
+            <div class="flow-arrow-line"></div>
+            <div class="flow-arrow-badge">↓ Aggregated via Additive Evidence Engine</div>
+            <div class="flow-arrow-line"></div>
+          </div>
+
+          <!-- Step 3: Composite Risk Score & Explainable Verdict -->
+          <div class="risk-outcome-card">
+            <div class="outcome-score-box">
+              <span class="outcome-label">Composite Forgery Risk</span>
+              <span class="outcome-score danger">84 / 100</span>
+              <span class="outcome-sub">Sum of additive evidence signals</span>
+            </div>
+            <div class="outcome-divider"></div>
+            <div class="outcome-verdict-box">
+              <span class="outcome-label">Calibrated Decision</span>
+              <span class="outcome-verdict danger">LIKELY FORGED</span>
+              <span class="outcome-desc">Exceeds critical risk threshold (75+). Full cryptographic evidence ledger attached.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="risk-philosophy-banner">
+          <span class="rp-tag">CORE ARCHITECTURE</span>
+          <span><strong>Evidence</strong> → <strong>Correlation</strong> → <strong>Risk Assessment</strong> → <strong>Explainable Verdict</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: "ONE DOCUMENT. MULTIPLE FORENSIC SIGNALS." PIPELINE -->
+    <section class="pipeline-section" id="pipelineSection">
+      <div class="container">
+        <div class="section-heading text-center">
+          <span class="section-kicker">Multi-Layered Detection</span>
+          <h2 class="section-title">One Document. Multiple Forensic Signals.</h2>
+          <p class="section-subtitle">
+            A comprehensive multi-layered inspection pipeline running on every ingested financial document. Click any stage to explore its detection methodology.
+          </p>
+        </div>
+
+        <div class="pipeline-stages-list">
+          <div class="pipeline-stage-item active" data-stage="1">
+            <div class="psi-header">
+              <div class="psi-num">01</div>
+              <div class="psi-info">
+                <strong class="psi-title">Image Quality & Pre-flight</strong>
+                <span class="psi-summary">Validates resolution, lighting uniformity, blur, and geometric skew</span>
+              </div>
+              <span class="psi-chevron">▾</span>
+            </div>
+            <div class="psi-body">
+              <p>Ensures the uploaded financial document meets minimal forensic resolution (≥150 DPI) and checks for camera motion blur or uneven glare that could corrupt downstream pixel analysis.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Laplacian Variance ≥ 120 (Sharpness threshold)</div>
+            </div>
+          </div>
+
+          <div class="pipeline-stage-item" data-stage="2">
+            <div class="psi-header">
+              <div class="psi-num">02</div>
+              <div class="psi-info">
+                <strong class="psi-title">OCR & Structured Text Extraction</strong>
+                <span class="psi-summary">Extracts monetary totals, account numbers, dates, and transaction rows</span>
+              </div>
+              <span class="psi-chevron">▸</span>
+            </div>
+            <div class="psi-body" style="display:none;">
+              <p>Performs character recognition with spatial bounding boxes. Isolates critical financial fields including opening balance, transaction ledger items, and total debits/credits.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Character recognition confidence & spatial alignment matrix</div>
+            </div>
+          </div>
+
+          <div class="pipeline-stage-item" data-stage="3">
+            <div class="psi-header">
+              <div class="psi-num">03</div>
+              <div class="psi-info">
+                <strong class="psi-title">Pixel Forensics (ELA & Sensor Noise)</strong>
+                <span class="psi-summary">Identifies localized compression anomalies across 8x8 DCT blocks</span>
+              </div>
+              <span class="psi-chevron">▸</span>
+            </div>
+            <div class="psi-body" style="display:none;">
+              <p>Recompresses document at calibrated quality levels and measures local error delta. Digital insertions and spliced text display significantly higher compression error than the ambient original.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Normalized ELA ratio (&gt;2.2x indicates modification)</div>
+            </div>
+          </div>
+
+          <div class="pipeline-stage-item" data-stage="4">
+            <div class="psi-header">
+              <div class="psi-num">04</div>
+              <div class="psi-info">
+                <strong class="psi-title">Clone & Splicing Detection</strong>
+                <span class="psi-summary">Exposes copy-move forgery, replicated background textures, and cloned stamps</span>
+              </div>
+              <span class="psi-chevron">▸</span>
+            </div>
+            <div class="psi-body" style="display:none;">
+              <p>Applies 2D Normalized Cross-Correlation (NCC) across image patches to detect identical texture blocks copied from elsewhere in the statement to conceal original transaction figures.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Peak correlation coefficient &gt; 0.92 with non-zero spatial offset</div>
+            </div>
+          </div>
+
+          <div class="pipeline-stage-item" data-stage="5">
+            <div class="psi-header">
+              <div class="psi-num">05</div>
+              <div class="psi-info">
+                <strong class="psi-title">Typography & Layout Analysis</strong>
+                <span class="psi-summary">Detects font metric variations, kerning discrepancies, and baseline drift</span>
+              </div>
+              <span class="psi-chevron">▸</span>
+            </div>
+            <div class="psi-body" style="display:none;">
+              <p>Inspects glyph antialiasing curves, stroke weight consistency, and baseline alignment. Spliced numeric digits rarely match the native font rasterization engine of the original statement.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Baseline regression variance & font edge profile mismatch</div>
+            </div>
+          </div>
+
+          <div class="pipeline-stage-item" data-stage="6">
+            <div class="psi-header">
+              <div class="psi-num">06</div>
+              <div class="psi-info">
+                <strong class="psi-title">Document Structure & Accounting Arithmetic</strong>
+                <span class="psi-summary">Verifies opening balance + credits - debits = declared closing balance</span>
+              </div>
+              <span class="psi-chevron">▸</span>
+            </div>
+            <div class="psi-body" style="display:none;">
+              <p>Validates mathematical consistency of the financial document. If a fraudster modifies the closing balance without altering ledger line items, the arithmetic checksum instantly fails.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Checksum delta (₹0.00 required for verification)</div>
+            </div>
+          </div>
+
+          <div class="pipeline-stage-item" data-stage="7">
+            <div class="psi-header">
+              <div class="psi-num">07</div>
+              <div class="psi-info">
+                <strong class="psi-title">Evidence Engine & Risk Scoring</strong>
+                <span class="psi-summary">Correlates orthogonal signals into a calibrated, explainable 0–100 risk score</span>
+              </div>
+              <span class="psi-chevron">▸</span>
+            </div>
+            <div class="psi-body" style="display:none;">
+              <p>Combines independent signals through additive point allocation. Generates a clear verdict (No Significant Tampering Detected, Suspicious / Inconclusive, or Likely Forged) with full evidence breakdown.</p>
+              <div class="psi-meta"><strong>Key Metric:</strong> Composite Risk Score (0–39 Clean, 40–74 Suspicious, 75–100 Likely Forged)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: PRIVACY ARCHITECTURE -->
+    <section class="privacy-arch-section" id="privacyArchSection">
+      <div class="container">
+        <div class="section-heading text-center">
+          <span class="section-kicker">Zero-Cloud Security</span>
+          <h2 class="section-title">Privacy Architecture</h2>
+          <p class="section-subtitle">
+            Sensitive financial documents are processed locally inside client hardware memory. Zero cloud transmission.
+          </p>
+        </div>
+
+        <div class="privacy-boundary-box">
+          <div class="pb-header">
+            <div class="pb-status">
+              <span class="pb-dot"></span>
+              <span>CLIENT HARDWARE EXECUTION BOUNDARY</span>
+            </div>
+            <span class="pb-tag">LOCAL MEMORY ISOLATION</span>
+          </div>
+
+          <div class="pb-flow">
+            <div class="pb-node">
+              <div class="pb-node-icon">📄</div>
+              <strong>USER DOCUMENT</strong>
+              <small>Bank statement / invoice</small>
+            </div>
+            <div class="pb-arrow">→</div>
+            <div class="pb-node core">
+              <div class="pb-node-icon">🔒</div>
+              <strong>DEVICE SANDBOX</strong>
+              <ul class="pb-tasks">
+                <li>• In-Memory Pixel Rasterization</li>
+                <li>• On-Device CV & N-ELA Analysis</li>
+                <li>• Additive Risk Calculation Engine</li>
+                <li>• Cryptographic SHA-256 Hash</li>
+              </ul>
+            </div>
+            <div class="pb-arrow">→</div>
+            <div class="pb-node">
+              <div class="pb-node-icon">📊</div>
+              <strong>LOCAL REPORT</strong>
+              <small>Evidence breakdown & HUD</small>
+            </div>
+          </div>
+
+          <div class="pb-footer">
+            <div class="pb-guarantee">
+              <span class="pbg-icon">🛡️</span>
+              <span><strong>Complete Isolation:</strong> Document pixels never leave your device. All memory buffers are flushed immediately upon session reset.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: CONTROLLED BENCHMARK SHOWCASE -->
+    <section class="benchmark-section" id="benchmarkSection">
+      <div class="container">
+        <div class="benchmark-card">
+          <div class="bench-header">
+            <div>
+              <span class="bench-badge">CONTROLLED FORENSIC BENCHMARK</span>
+              <h3 class="bench-title">Altered Amount Detection Benchmark</h3>
+              <p class="bench-sub">Synthetic benchmark example — not a user document. Demonstrates system sensitivity to single-digit balance splicing.</p>
+            </div>
+            <div class="bench-score-pill">
+              <span class="bsp-label">Benchmark Score</span>
+              <span class="bsp-val danger">84 / 100</span>
+              <span class="bsp-verdict danger">LIKELY FORGED</span>
+            </div>
+          </div>
+          <div class="bench-actions">
+            <a href="#/lab" class="btn-primary" data-route="lab">
+              <span>Inspect in Forensic Lab →</span>
+            </a>
+            <a href="#/technology" class="btn-secondary" data-route="technology">
+              <span>View Technical Blueprint</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: FINAL CALL TO ACTION -->
+    <section class="final-cta-section" id="finalCtaSection">
+      <div class="container text-center">
+        <h2 class="cta-title">Ready to Verify a Document?</h2>
+        <p class="cta-subtitle">
+          Upload a financial document and see what the forensic engine detects.
         </p>
-      </div>
-
-      <div class="slider-container" id="comparisonSlider">
-        <div class="slider-image-wrapper">
-          <img src="samples/sample_2_amount_forged.png" alt="Manipulated Document" class="slider-img" id="sliderManipulated">
-          <img src="samples/sample_1_authentic.png" alt="Authentic Document" class="slider-img overlay" id="sliderAuthentic">
-          <div class="slider-handle" id="sliderHandle">
-            <div class="slider-handle-button">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="15 18 9 12 15 6"></polyline>
-                <polyline points="9 18 3 12 9 6"></polyline>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div class="slider-footer-bar">
-          <span style="color:var(--color-success);">← Authentic Baseline (₹1,83,700.00)</span>
-          <span style="color:var(--color-danger);">Spliced Forgery (₹9,83,700.00) →</span>
+        <div class="cta-btn-wrapper">
+          <a href="#/scan" class="btn-primary cta-btn-large" data-route="scan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span>Scan a Document</span>
+          </a>
         </div>
       </div>
-
-      <!-- Reveal Banner -->
-      <div class="slider-reveal-box">
-        <div class="reveal-icon">🎯</div>
-        <div>
-          <strong>Forensic Detection Reveal:</strong>
-          <span>AegisDoc detected a <strong>3.8x compression error spike</strong> in the closing balance field (+₹8,00,000 inflation) and an arithmetic checksum failure.</span>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
   </div>
 
   <!-- ========================================================================
@@ -1091,9 +1446,9 @@
   <div id="verdictToast"></div>
 
   <!-- Scripts -->
-  <script src="forensics.js?v=3.6.0"></script>
-  <script src="voice.js?v=3.6.0"></script>
-  <script src="bridge.js?v=3.6.0"></script>
-  <script src="app.js?v=3.6.0"></script>
+  <script src="forensics.js?v=3.8.0"></script>
+  <script src="voice.js?v=3.8.0"></script>
+  <script src="bridge.js?v=3.8.0"></script>
+  <script src="app.js?v=3.8.0"></script>
 </body>
 </html>
