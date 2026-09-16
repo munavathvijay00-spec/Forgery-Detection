@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=3.9.1">
+  <link rel="stylesheet" href="styles.css?v=3.9.2">
 </head>
 <body>
 
@@ -26,29 +26,39 @@
        ======================================================================== -->
   <header class="top-navbar">
     <div class="nav-container">
-      <a href="#/home" class="nav-brand" data-route="home">
-        <div class="nav-logo-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M9 12l2 2 4-4"/>
+      <!-- Left side: Brand + Dashboard Slide Bar Trigger -->
+      <div class="nav-brand-wrapper">
+        <button id="dashboardSlidebarToggle" class="nav-dashboard-toggle-btn" title="Open AegisDoc Operations Slide Bar" aria-label="Toggle Dashboard Slide Bar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
           </svg>
-        </div>
-        <div class="nav-brand-text">
-          <span class="nav-brand-title">AegisDoc</span>
-          <span class="nav-brand-tagline">Know Before You Trust</span>
-        </div>
-      </a>
+          <span class="btn-text">Dashboard</span>
+        </button>
 
-      <!-- Desktop Nav Links -->
+        <a href="#/home" class="nav-brand" data-route="home">
+          <div class="nav-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="nav-brand-text">
+            <span class="nav-brand-title">AegisDoc</span>
+            <span class="nav-brand-tagline">Know Before You Trust</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Desktop Nav Links (Streamlined Primary Modules) -->
       <nav class="nav-links" id="desktopNavLinks">
         <a href="#/home" class="nav-link active" data-route="home">Home</a>
         <a href="#/scan" class="nav-link" data-route="scan">Scan Document</a>
         <a href="#/lab" class="nav-link" data-route="lab">Forensic Lab</a>
-        <a href="#/how-it-works" class="nav-link" data-route="how-it-works">How It Works</a>
         <a href="#/risk" class="nav-link" data-route="risk">Risk Explorer</a>
         <a href="#/technology" class="nav-link" data-route="technology">Technology</a>
-        <a href="#/privacy" class="nav-link" data-route="privacy">Privacy Center</a>
-        <a href="#/history" class="nav-link" data-route="history">History</a>
       </nav>
 
       <!-- Header Actions -->
@@ -69,7 +79,7 @@
           <span id="bridgeStatusText">Office Kit</span>
         </div>
 
-        <!-- Mobile Menu Toggle Button (Visible on mobile) -->
+        <!-- Mobile Menu Toggle Button -->
         <button id="mobileMenuToggle" class="nav-icon-btn mobile-menu-btn" title="Toggle Navigation Menu" aria-label="Toggle navigation menu">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="menuIconHam">
             <line x1="3" y1="6" x2="21" y2="6"/>
@@ -89,87 +99,171 @@
     </div>
   </header>
 
-  <!-- Mobile Navigation Drawer -->
-  <div class="mobile-nav-drawer" id="mobileNavDrawer">
-    <div class="drawer-header">
-      <span class="drawer-title">AegisDoc Navigation</span>
-      <span class="drawer-badge">8 Modules</span>
+  <!-- Backdrop for Dashboard Slide Bar -->
+  <div class="slidebar-backdrop" id="slidebarBackdrop"></div>
+
+  <!-- AegisDoc Enterprise Dashboard Slide Bar (Off-Canvas Drawer) -->
+  <aside class="dashboard-slidebar" id="dashboardSlideBar" aria-label="AegisDoc Operations Dashboard">
+    <!-- Slide Bar Header -->
+    <div class="slidebar-header">
+      <div class="slidebar-brand">
+        <div class="slidebar-logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="slidebar-title">AegisDoc Operations</h3>
+          <span class="slidebar-subtitle">On-Device Forensic Enclave</span>
+        </div>
+      </div>
+      <button class="slidebar-close-btn" id="slidebarCloseBtn" aria-label="Close Dashboard Slide Bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
-    <div class="drawer-links-grid">
-      <a href="#/home" class="drawer-link active" data-route="home">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>Home</strong>
-          <small>Overview & Interactive Proof</small>
+
+    <!-- Active Document Live Status Widget -->
+    <div class="slidebar-doc-widget" id="slidebarDocWidget">
+      <div class="sd-widget-header">
+        <span class="sd-widget-label">ACTIVE AUDIT TARGET</span>
+        <span class="sd-widget-status" id="sbDocStatusBadge">STANDBY</span>
+      </div>
+      <div class="sd-widget-body" id="sbDocWidgetBody">
+        <div class="sd-doc-info">
+          <span class="sd-doc-icon">📄</span>
+          <div class="sd-doc-meta">
+            <span class="sd-doc-name" id="sbDocName">No document loaded</span>
+            <span class="sd-doc-sub" id="sbDocSub">Load sample or scan a document</span>
+          </div>
         </div>
-      </a>
-      <a href="#/scan" class="drawer-link" data-route="scan">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>Scan Document</strong>
-          <small>Ingestion & Active Document HUD</small>
+        <div class="sd-doc-actions">
+          <a href="#/scan" class="btn-xs btn-primary slidebar-action-btn" data-route="scan">Ingest Document</a>
         </div>
-      </a>
-      <a href="#/lab" class="drawer-link" data-route="lab">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>Forensic Lab</strong>
-          <small>Viewfinder, ELA Heatmap & HUD</small>
-        </div>
-      </a>
-      <a href="#/how-it-works" class="drawer-link" data-route="how-it-works">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>How It Works</strong>
-          <small>10-Stage Pipeline Methodology</small>
-        </div>
-      </a>
-      <a href="#/risk" class="drawer-link" data-route="risk">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>Risk Explorer</strong>
-          <small>Score Breakdown & Thresholds</small>
-        </div>
-      </a>
-      <a href="#/technology" class="drawer-link" data-route="technology">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>Technology</strong>
-          <small>Math Models & ELA Comparison</small>
-        </div>
-      </a>
-      <a href="#/privacy" class="drawer-link" data-route="privacy">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>Privacy Center</strong>
-          <small>100% On-Device Enclave</small>
-        </div>
-      </a>
-      <a href="#/history" class="drawer-link" data-route="history">
-        <span class="drawer-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        </span>
-        <div class="drawer-text">
-          <strong>History</strong>
-          <small>Local Verification Audit Ledger</small>
-        </div>
-      </a>
+      </div>
     </div>
-  </div>
+
+    <!-- Grouped Navigation Modules -->
+    <div class="slidebar-nav-body">
+      <!-- Group 1: Core Operations -->
+      <div class="slidebar-group">
+        <div class="slidebar-group-title">CORE OPERATIONS</div>
+        <nav class="slidebar-group-links">
+          <a href="#/home" class="slidebar-link active" data-route="home">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Home Overview</span>
+              <span class="sb-desc">Executive summary & proof slider</span>
+            </div>
+            <span class="sb-badge">01</span>
+          </a>
+
+          <a href="#/scan" class="slidebar-link" data-route="scan">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Scan Document</span>
+              <span class="sb-desc">Ingestion, Camera, Samples & HUD</span>
+            </div>
+            <span class="sb-badge">02</span>
+          </a>
+
+          <a href="#/lab" class="slidebar-link" data-route="lab">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Forensic Lab</span>
+              <span class="sb-desc">Heatmaps, ELA Viewfinder & Inspector</span>
+            </div>
+            <span class="sb-badge">03</span>
+          </a>
+
+          <a href="#/risk" class="slidebar-link" data-route="risk">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Risk Explorer</span>
+              <span class="sb-desc">Multi-signal scores & mathematical weights</span>
+            </div>
+            <span class="sb-badge">04</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Group 2: Forensic Architecture & Tech -->
+      <div class="slidebar-group">
+        <div class="slidebar-group-title">FORENSIC ARCHITECTURE</div>
+        <nav class="slidebar-group-links">
+          <a href="#/how-it-works" class="slidebar-link" data-route="how-it-works">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">How It Works</span>
+              <span class="sb-desc">10-stage execution pipeline</span>
+            </div>
+            <span class="sb-badge">05</span>
+          </a>
+
+          <a href="#/technology" class="slidebar-link" data-route="technology">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Technology</span>
+              <span class="sb-desc">DCT algorithms & pixel models</span>
+            </div>
+            <span class="sb-badge">06</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Group 3: Compliance & Security -->
+      <div class="slidebar-group">
+        <div class="slidebar-group-title">COMPLIANCE & GOVERNANCE</div>
+        <nav class="slidebar-group-links">
+          <a href="#/privacy" class="slidebar-link" data-route="privacy">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Privacy Center</span>
+              <span class="sb-desc">Zero-knowledge local sandbox guarantee</span>
+            </div>
+            <span class="sb-badge">07</span>
+          </a>
+
+          <a href="#/history" class="slidebar-link" data-route="history">
+            <span class="sb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </span>
+            <div class="sb-text">
+              <span class="sb-title">Verification Ledger</span>
+              <span class="sb-desc">Local audit trail & export reports</span>
+            </div>
+            <span class="sb-badge">08</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Slide Bar Telemetry Footer -->
+    <div class="slidebar-footer">
+      <div class="sb-telemetry-row">
+        <span class="sb-telemetry-item"><span class="sb-dot live"></span> Local Enclave Ready</span>
+        <span class="sb-telemetry-item"><span class="sb-dot live"></span> WebGL Accel</span>
+      </div>
+      <div class="sb-footer-copy">AegisDoc Autonomous Forensics • v3.9.2 Enterprise</div>
+    </div>
+  </aside>
 
   <!-- ========================================================================
        PAGE 1: HOME (Hero & Interactive Challenge)
@@ -203,47 +297,19 @@
             </a>
           </div>
 
-          <!-- Four Enterprise Capability Cards -->
-          <div class="trust-grid">
-            <div class="trust-item">
-              <div class="trust-item-header">
-                <span class="trust-num">01</span>
-                <span class="trust-icon-svg">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-                </span>
-              </div>
-              <div class="trust-title">ON-DEVICE</div>
-              <div class="trust-desc">Analysis designed to keep sensitive document processing local where supported.</div>
+          <!-- Trust Assurance Badges -->
+          <div class="hero-trust-assurance">
+            <div class="hero-trust-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>100% Client-Side Engine</span>
             </div>
-            <div class="trust-item">
-              <div class="trust-item-header">
-                <span class="trust-num">02</span>
-                <span class="trust-icon-svg">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                </span>
-              </div>
-              <div class="trust-title">PRIVACY-FIRST</div>
-              <div class="trust-desc">Minimize unnecessary transmission of sensitive financial documents.</div>
+            <div class="hero-trust-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Zero Document Uploads</span>
             </div>
-            <div class="trust-item">
-              <div class="trust-item-header">
-                <span class="trust-num">03</span>
-                <span class="trust-icon-svg">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                </span>
-              </div>
-              <div class="trust-title">EXPLAINABLE</div>
-              <div class="trust-desc">Every result is supported by observable forensic evidence.</div>
-            </div>
-            <div class="trust-item">
-              <div class="trust-item-header">
-                <span class="trust-num">04</span>
-                <span class="trust-icon-svg">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><circle cx="11" cy="11" r="3"/></svg>
-                </span>
-              </div>
-              <div class="trust-title">MULTI-FORENSIC</div>
-              <div class="trust-desc">Correlates independent signals including compression, noise, clone detection, typography, and document structure.</div>
+            <div class="hero-trust-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Mathematical Explainability</span>
             </div>
           </div>
         </div>
@@ -318,6 +384,57 @@
               <span>💡 <strong>Synthetic forensic demo</strong> — not a user document. Tap pins above to inspect evidence.</span>
               <a href="#/scan" class="hero-showcase-link" data-route="scan">Scan or upload your own document below ↓</a>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1B: ENTERPRISE FORENSIC CAPABILITIES (Full Width 4-Card Alignment) -->
+    <section class="hero-capabilities-section">
+      <div class="container">
+        <div class="capabilities-grid">
+          <div class="cap-card">
+            <div class="cap-card-header">
+              <span class="cap-num">01</span>
+              <span class="cap-icon-svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              </span>
+            </div>
+            <h3 class="cap-title">ON-DEVICE ENGINE</h3>
+            <p class="cap-desc">Analysis runs 100% locally inside the browser's WebAssembly and WebGL execution sandbox with zero network dependency.</p>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-card-header">
+              <span class="cap-num">02</span>
+              <span class="cap-icon-svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </span>
+            </div>
+            <h3 class="cap-title">ZERO-KNOWLEDGE PRIVACY</h3>
+            <p class="cap-desc">Financial statements, tax records, and ID proofs never leave the user's device, eliminating cloud data breach liability.</p>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-card-header">
+              <span class="cap-num">03</span>
+              <span class="cap-icon-svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </span>
+            </div>
+            <h3 class="cap-title">EXPLAINABLE MATH</h3>
+            <p class="cap-desc">Every verdict is defended by raw mathematical artifacts: Normalized ELA ratios, noise variance, clone matches, and font grids.</p>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-card-header">
+              <span class="cap-num">04</span>
+              <span class="cap-icon-svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><circle cx="11" cy="11" r="3"/></svg>
+              </span>
+            </div>
+            <h3 class="cap-title">MULTI-SIGNAL FUSION</h3>
+            <p class="cap-desc">Fuses independent orthogonal forensics: compression rate, texture entropy, block clones, and layout checksums.</p>
           </div>
         </div>
       </div>
@@ -1592,9 +1709,9 @@
   <div id="verdictToast"></div>
 
   <!-- Scripts -->
-  <script src="forensics.js?v=3.9.1"></script>
-  <script src="voice.js?v=3.9.1"></script>
-  <script src="bridge.js?v=3.9.1"></script>
-  <script src="app.js?v=3.9.1"></script>
+  <script src="forensics.js?v=3.9.2"></script>
+  <script src="voice.js?v=3.9.2"></script>
+  <script src="bridge.js?v=3.9.2"></script>
+  <script src="app.js?v=3.9.2"></script>
 </body>
 </html>

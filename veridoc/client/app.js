@@ -304,6 +304,54 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modeBadgeText) modeBadgeText.textContent = 'REAL ON-DEVICE ANALYSIS';
       }
     }
+    updateSlideBarDocWidget();
+  }
+
+  function updateSlideBarDocWidget() {
+    const sbDocStatusBadge = document.getElementById('sbDocStatusBadge');
+    const sbDocName = document.getElementById('sbDocName');
+    const sbDocSub = document.getElementById('sbDocSub');
+    const sbDocWidgetBody = document.getElementById('sbDocWidgetBody');
+
+    if (!sbDocStatusBadge || !sbDocName || !sbDocSub) return;
+
+    if (!state.activeDocument) {
+      sbDocStatusBadge.className = 'sd-widget-status';
+      sbDocStatusBadge.textContent = 'STANDBY';
+      sbDocName.textContent = 'No document loaded';
+      sbDocSub.textContent = 'Load sample or scan a document';
+      if (sbDocWidgetBody) {
+        const actionBtn = sbDocWidgetBody.querySelector('.slidebar-action-btn');
+        if (actionBtn) {
+          actionBtn.textContent = 'Ingest Document';
+          actionBtn.setAttribute('href', '#/scan');
+          actionBtn.setAttribute('data-route', 'scan');
+        }
+      }
+      return;
+    }
+
+    const doc = state.activeDocument;
+    sbDocName.textContent = doc.name || doc.id || 'Active Document';
+
+    if (state.analysisResults) {
+      const isForged = state.analysisResults.forgeryScore >= 50;
+      sbDocStatusBadge.textContent = isForged ? `RISK ${state.analysisResults.forgeryScore}` : `AUTHENTIC ${state.analysisResults.forgeryScore}`;
+      sbDocStatusBadge.className = `sd-widget-status ${isForged ? 'flagged' : 'authentic'}`;
+      sbDocSub.textContent = `Score: ${state.analysisResults.forgeryScore}/100 • ${isForged ? 'Flagged' : 'Passed'}`;
+      if (sbDocWidgetBody) {
+        const actionBtn = sbDocWidgetBody.querySelector('.slidebar-action-btn');
+        if (actionBtn) {
+          actionBtn.textContent = 'Inspect in Lab';
+          actionBtn.setAttribute('href', '#/lab');
+          actionBtn.setAttribute('data-route', 'lab');
+        }
+      }
+    } else {
+      sbDocStatusBadge.className = 'sd-widget-status';
+      sbDocStatusBadge.textContent = 'ANALYZING...';
+      sbDocSub.textContent = `${doc.dimensions?.width || 0}×${doc.dimensions?.height || 0}px`;
+    }
   }
 
   // ========================================================================
@@ -654,8 +702,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // 2. Synchronize navigation active states across desktop, mobile drawer, and bottom nav
+      // 2. Synchronize navigation active states across desktop, dashboard slidebar, and mobile bottom nav
       document.querySelectorAll('.nav-link[data-route]').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('data-route') === canonical);
+      });
+      document.querySelectorAll('.slidebar-link[data-route]').forEach(link => {
         link.classList.toggle('active', link.getAttribute('data-route') === canonical);
       });
       document.querySelectorAll('.drawer-link[data-route]').forEach(link => {
@@ -665,8 +716,8 @@ document.addEventListener('DOMContentLoaded', () => {
         item.classList.toggle('active', item.getAttribute('data-route') === canonical);
       });
 
-      // 3. Close mobile drawer if open
-      this.closeMobileDrawer();
+      // 3. Close dashboard slide bar if open
+      this.closeSlideBar();
 
       // 4. Update browser URL hash without jump
       if (updateHash && window.location.hash !== `#/${canonical}`) {
@@ -694,24 +745,37 @@ document.addEventListener('DOMContentLoaded', () => {
       this.navigate(hash, false);
     }
 
-    closeMobileDrawer() {
-      const drawer = document.getElementById('mobileNavDrawer');
+    closeSlideBar() {
+      const slideBar = document.getElementById('dashboardSlideBar');
+      const backdrop = document.getElementById('slidebarBackdrop');
+      if (slideBar) slideBar.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+      document.body.style.overflow = '';
       const hamIcon = document.getElementById('menuIconHam');
       const closeIcon = document.getElementById('menuIconClose');
-      if (drawer) drawer.classList.remove('open');
       if (hamIcon) hamIcon.style.display = 'block';
       if (closeIcon) closeIcon.style.display = 'none';
     }
 
-    toggleMobileDrawer() {
-      const drawer = document.getElementById('mobileNavDrawer');
+    toggleSlideBar() {
+      const slideBar = document.getElementById('dashboardSlideBar');
+      const backdrop = document.getElementById('slidebarBackdrop');
+      if (!slideBar) return;
+      const isOpen = slideBar.classList.toggle('open');
+      if (backdrop) backdrop.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
       const hamIcon = document.getElementById('menuIconHam');
       const closeIcon = document.getElementById('menuIconClose');
-      if (!drawer) return;
-      const isOpen = drawer.classList.toggle('open');
       if (hamIcon) hamIcon.style.display = isOpen ? 'none' : 'block';
       if (closeIcon) closeIcon.style.display = isOpen ? 'block' : 'none';
+      if (isOpen && typeof updateSlideBarDocWidget === 'function') {
+        updateSlideBarDocWidget();
+      }
     }
+
+    // Compatibility aliases
+    closeMobileDrawer() { this.closeSlideBar(); }
+    toggleMobileDrawer() { this.toggleSlideBar(); }
 
     init() {
       // Listen for browser hash changes (Back / Forward buttons & manual hash input)
@@ -745,13 +809,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Dashboard Slidebar Toggle (Header button)
+      const dashboardToggle = document.getElementById('dashboardSlidebarToggle');
+      if (dashboardToggle) {
+        dashboardToggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleSlideBar();
+        });
+      }
+
+      // Close button inside slide bar
+      const slidebarCloseBtn = document.getElementById('slidebarCloseBtn');
+      if (slidebarCloseBtn) {
+        slidebarCloseBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.closeSlideBar();
+        });
+      }
+
+      // Backdrop click closes slide bar
+      const backdrop = document.getElementById('slidebarBackdrop');
+      if (backdrop) {
+        backdrop.addEventListener('click', () => this.closeSlideBar());
+      }
+
+      // Escape key closes slide bar
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') this.closeSlideBar();
+      });
+
       // Mobile Menu Hamburger Toggle
       const mobileToggle = document.getElementById('mobileMenuToggle');
       if (mobileToggle) {
         mobileToggle.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          this.toggleMobileDrawer();
+          this.toggleSlideBar();
         });
       }
 
@@ -761,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mNavMore.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          this.toggleMobileDrawer();
+          this.toggleSlideBar();
         });
       }
 
@@ -947,6 +1042,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Sync telemetry with Office Kit bridge
       bridge.syncTelemetry(report, currentDoc.name);
+
+      // Update slidebar document status widget with latest findings
+      updateSlideBarDocWidget();
 
     } catch (err) {
       console.error('Forensic analysis error:', err);
@@ -2165,6 +2263,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
     }
+
+    updateSlideBarDocWidget();
   }
 
   // ========================================================================
