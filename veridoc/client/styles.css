@@ -178,6 +178,14 @@ body {
   color: #38bdf8;
   flex-shrink: 0;
 }
+@media (max-width: 520px) {
+  .nav-dashboard-toggle-btn .btn-text {
+    display: none;
+  }
+  .nav-dashboard-toggle-btn {
+    padding: 7px 9px;
+  }
+}
 
 .nav-brand {
   display: flex;
