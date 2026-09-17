@@ -14,13 +14,21 @@
 
 class AegisForensicEngine {
   constructor() {
-    this.weights = {
-      ela: 0.25,
-      noise: 0.20,
-      copyMove: 0.20,
-      geometry: 0.15,
+    const cfg = (typeof window !== 'undefined' && window.AegisForensicConfig) ? window.AegisForensicConfig : null;
+    this.weights = cfg ? {
+      ela: cfg.weights.ela,
+      noise: cfg.weights.noiseDiscontinuity,
+      copyMove: cfg.weights.copyMoveNcc,
+      geometry: cfg.weights.fontBaselineGeometry,
       semantics: 0.10,
-      metadata: 0.10
+      metadata: cfg.weights.metadataExif
+    } : {
+      ela: 0.28,
+      noise: 0.22,
+      copyMove: 0.22,
+      geometry: 0.16,
+      semantics: 0.10,
+      metadata: 0.12
     };
   }
 
@@ -525,7 +533,9 @@ class AegisForensicEngine {
       }, 1500);
 
       try {
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        const cfg = (typeof window !== 'undefined' && window.AegisForensicConfig) ? window.AegisForensicConfig : null;
+        const elaQuality = cfg ? (cfg.engine.elaQuality / 100) : 0.85;
+        const dataUrl = canvas.toDataURL('image/jpeg', elaQuality);
         const recompressedImg = new Image();
         recompressedImg.onload = () => {
           const compCanvas = document.createElement('canvas');

@@ -634,6 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'how-it-works': document.getElementById('page-how-it-works'),
         'risk': document.getElementById('page-risk'),
         'technology': document.getElementById('page-technology'),
+        'validation': document.getElementById('page-validation'),
         'privacy': document.getElementById('page-privacy'),
         'history': document.getElementById('page-history')
       };
@@ -654,8 +655,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'forensic-lab': 'lab',
         'workspace': 'lab',
         'results': 'lab',
-        'matrix': 'lab',
-        'matrixSection': 'lab',
+        'matrix': 'validation',
+        'matrixSection': 'validation',
         'how-it-works': 'how-it-works',
         'howitworks': 'how-it-works',
         'howItWorks': 'how-it-works',
@@ -664,6 +665,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'riskExplorer': 'risk',
         'technology': 'technology',
         'tech': 'technology',
+        'validation': 'validation',
+        'benchmark': 'validation',
+        'benchmarks': 'validation',
+        'metrics': 'validation',
+        'eval': 'validation',
         'privacy': 'privacy',
         'privacy-center': 'privacy',
         'history': 'history',
@@ -691,6 +697,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!targetPage) return;
 
       this.currentRoute = canonical;
+
+      // Dynamic Route Title & Accessibility Announcement
+      const routeTitles = {
+        'home': 'AegisDoc — Know Before You Trust | On-Device Financial Forensics',
+        'scan': 'Document Scanner & Ingestion — AegisDoc',
+        'lab': 'Digital Forensic Workstation & ELA Heatmap — AegisDoc',
+        'how-it-works': '10-Stage Pipeline Architecture — AegisDoc',
+        'risk': 'Multi-Signal Risk Explorer & Model Weights — AegisDoc',
+        'technology': 'Technology Blueprint & Mathematical Models — AegisDoc',
+        'validation': 'Engine Validation & Confusion Matrix (n=140) — AegisDoc',
+        'privacy': 'Privacy Center & Air-Gap Network Boundary — AegisDoc',
+        'history': 'Verification Ledger & Local Audit Trail — AegisDoc'
+      };
+      document.title = routeTitles[canonical] || 'AegisDoc — Know Before You Trust';
 
       // 1. Switch active page views
       Object.entries(this.routes).forEach(([key, pageEl]) => {
@@ -875,6 +895,202 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render initial scan history on load
   renderHistoryList();
+
+  // ========================================================================
+  // NON-NEGOTIABLE UPGRADE 1: FAST 1-CLICK BUNDLED SAMPLE ANALYSIS (<3s)
+  // ========================================================================
+  window.triggerSampleAnalysis = async function (sampleKey = 'sample_2_amount_forged') {
+    const uploadModal = document.getElementById('uploadModalBackdrop');
+    if (uploadModal) uploadModal.style.display = 'none';
+
+    if (window.router) {
+      window.router.navigate('scan');
+    }
+
+    showToast('⚡ Ingesting synthetic benchmark statement...', 2000);
+    await loadBenchmarkSample(sampleKey);
+    showToast('✓ Sample analysis completed: Altered balance detected', 3000);
+  };
+
+  ['heroRunSampleBtn', 'scannerRunSampleBtn', 'emptyCanvasSampleBtn', 'umTrySampleLink'].forEach(btnId => {
+    const el = document.getElementById(btnId);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const key = el.getAttribute('data-sample-key') || 'sample_2_amount_forged';
+        window.triggerSampleAnalysis(key);
+      });
+    }
+  });
+
+  // ========================================================================
+  // NON-NEGOTIABLE UPGRADE 5: HARDENED UPLOAD WORKFLOW MODAL
+  // ========================================================================
+  const uploadModal = document.getElementById('uploadModalBackdrop');
+  const uploadModalCloseBtn = document.getElementById('uploadModalCloseBtn');
+  const umDropzone = document.getElementById('umDropzone');
+  const umFileInput = document.getElementById('umFileInput');
+  const umAlertBox = document.getElementById('umAlertBox');
+  const umAlertText = document.getElementById('umAlertText');
+  const umProgressWrap = document.getElementById('umProgressWrap');
+  const umProgressBar = document.getElementById('umProgressBar');
+  const umProgressPct = document.getElementById('umProgressPct');
+  const umProgressStepText = document.getElementById('umProgressStepText');
+  const umCancelBtn = document.getElementById('umCancelBtn');
+  let uploadAnalysisCancelled = false;
+
+  function showUploadError(msg) {
+    if (umAlertBox && umAlertText) {
+      umAlertText.textContent = msg;
+      umAlertBox.style.display = 'flex';
+    }
+  }
+
+  function clearUploadError() {
+    if (umAlertBox) umAlertBox.style.display = 'none';
+  }
+
+  function openUploadModal() {
+    clearUploadError();
+    if (umProgressWrap) umProgressWrap.style.display = 'none';
+    if (uploadModal) uploadModal.style.display = 'flex';
+  }
+
+  function closeUploadModal() {
+    if (uploadModal) uploadModal.style.display = 'none';
+    uploadAnalysisCancelled = true;
+  }
+
+  if (uploadBtn) {
+    uploadBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openUploadModal();
+    });
+  }
+
+  if (uploadModalCloseBtn) {
+    uploadModalCloseBtn.addEventListener('click', closeUploadModal);
+  }
+
+  if (uploadModal) {
+    uploadModal.addEventListener('click', (e) => {
+      if (e.target === uploadModal) closeUploadModal();
+    });
+  }
+
+  if (umDropzone && umFileInput) {
+    umDropzone.addEventListener('click', () => umFileInput.click());
+    umDropzone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        umFileInput.click();
+      }
+    });
+
+    umDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      umDropzone.classList.add('dragover');
+    });
+
+    ['dragleave', 'dragend'].forEach(ev => {
+      umDropzone.addEventListener(ev, () => umDropzone.classList.remove('dragover'));
+    });
+
+    umDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      umDropzone.classList.remove('dragover');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        processIngestedFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    umFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        processIngestedFile(e.target.files[0]);
+      }
+    });
+  }
+
+  async function processIngestedFile(file) {
+    clearUploadError();
+    uploadAnalysisCancelled = false;
+
+    // Validate size limit (max 20 MB)
+    const maxSize = (window.AegisForensicConfig && window.AegisForensicConfig.engine.maxFileSizeBytes) || 20971520;
+    if (file.size > maxSize) {
+      showUploadError('File exceeds 20 MB maximum size limit. Please upload an optimized image or single-page PDF.');
+      return;
+    }
+
+    // Validate format
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    if (!allowed.includes(file.type) && !file.name.match(/\.(jpe?g|png|webp|pdf)$/i)) {
+      showUploadError('Unsupported format. Please provide a standard JPEG, PNG, WEBP, or PDF document.');
+      return;
+    }
+
+    if (umProgressWrap) umProgressWrap.style.display = 'block';
+    if (umProgressBar) umProgressBar.style.width = '20%';
+    if (umProgressPct) umProgressPct.textContent = '20%';
+    if (umProgressStepText) umProgressStepText.textContent = 'Reading local bytes...';
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      if (uploadAnalysisCancelled) return;
+
+      if (umProgressBar) umProgressBar.style.width = '50%';
+      if (umProgressPct) umProgressPct.textContent = '50%';
+      if (umProgressStepText) umProgressStepText.textContent = 'Allocating memory buffer & verifying dimensions...';
+
+      const arrayBuffer = e.target.result;
+      const blob = new Blob([arrayBuffer]);
+      const blobUrl = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = async () => {
+        if (uploadAnalysisCancelled) {
+          URL.revokeObjectURL(blobUrl);
+          return;
+        }
+
+        // Validate resolution (min 1000px on short edge recommended, minimum 400px hard floor)
+        const shortEdge = Math.min(img.naturalWidth || img.width, img.naturalHeight || img.height);
+        if (shortEdge < 400) {
+          showUploadError(`Image resolution too low (${img.naturalWidth}×${img.naturalHeight}px). Minimum required is 400px on short edge (recommended 1000px / 150 DPI).`);
+          if (umProgressWrap) umProgressWrap.style.display = 'none';
+          URL.revokeObjectURL(blobUrl);
+          return;
+        }
+
+        if (umProgressBar) umProgressBar.style.width = '80%';
+        if (umProgressPct) umProgressPct.textContent = '80%';
+        if (umProgressStepText) umProgressStepText.textContent = 'Running 6-layer on-device convolution...';
+
+        await setActiveDocument({
+          name: file.name,
+          imageObject: img,
+          arrayBuffer: arrayBuffer,
+          file: file,
+          isBenchmark: false
+        });
+
+        if (umProgressBar) umProgressBar.style.width = '100%';
+        if (umProgressPct) umProgressPct.textContent = '100%';
+        setTimeout(() => {
+          closeUploadModal();
+        }, 300);
+      };
+      img.src = blobUrl;
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  if (umCancelBtn) {
+    umCancelBtn.addEventListener('click', () => {
+      uploadAnalysisCancelled = true;
+      if (umProgressWrap) umProgressWrap.style.display = 'none';
+      showUploadError('Ingestion cancelled by user.');
+    });
+  }
 
   // ========================================================================
   // RUN 4 OPERATIONS FORENSIC ANALYSIS PIPELINE (RACE-CONDITION PROTECTED)
@@ -1877,17 +2093,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const sliderAuthentic = document.getElementById('sliderAuthentic');
   const sliderHandle = document.getElementById('sliderHandle');
   let isSliderDragging = false;
+  let currentSliderPct = 50;
 
   function updateSliderPosition(clientX) {
     if (!comparisonSlider || !sliderAuthentic || !sliderHandle) return;
     const rect = comparisonSlider.getBoundingClientRect();
     let pct = ((clientX - rect.left) / rect.width) * 100;
+    applySliderPct(pct);
+  }
+
+  function applySliderPct(pct) {
+    if (!sliderAuthentic || !sliderHandle) return;
     pct = Math.max(0, Math.min(100, pct));
+    currentSliderPct = pct;
     sliderAuthentic.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
     sliderHandle.style.left = `${pct}%`;
+    sliderHandle.setAttribute('aria-valuenow', Math.round(pct));
   }
 
   if (comparisonSlider && sliderHandle) {
+    sliderHandle.setAttribute('tabindex', '0');
+    sliderHandle.setAttribute('role', 'slider');
+    sliderHandle.setAttribute('aria-label', 'Before and after forensic split comparison slider');
+    sliderHandle.setAttribute('aria-valuemin', '0');
+    sliderHandle.setAttribute('aria-valuemax', '100');
+    sliderHandle.setAttribute('aria-valuenow', '50');
+
+    sliderHandle.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        applySliderPct(currentSliderPct - 5);
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        applySliderPct(currentSliderPct + 5);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        applySliderPct(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        applySliderPct(100);
+      }
+    });
+
     const onMove = (e) => {
       if (!isSliderDragging) return;
       const x = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : 0);

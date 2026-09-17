@@ -3,15 +3,23 @@
  * Ensures 100% Offline Capability in Airplane Mode with Network-First Live Updates.
  */
 
-const CACHE_NAME = 'aegisdoc-v3.9.3';
+const CACHE_NAME = 'aegisdoc-v3.10.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css',
+  './forensic-config.js',
+  './components/SampleAnalysisButton.js',
+  './components/ValidationSection.js',
+  './components/UploadModal.js',
+  './components/PrivacyBoundaryDiagram.js',
+  './components/PerformanceBlock.js',
   './app.js',
   './forensics.js',
   './bridge.js',
   './voice.js',
+  './offline.html',
+  './sitemap.xml',
   './manifest.json',
   './samples/manifest.json',
   './samples/sample_1_authentic.png',
