@@ -1,0 +1,170 @@
+{
+  "timestamp": "2026-09-19T13:11:50.414Z",
+  "corpusSummary": {
+    "totalSamples": 60,
+    "authenticCount": 30,
+    "forgedCount": 30,
+    "modalityBreakdown": {
+      "authentic": 30,
+      "copy_move": 10,
+      "splice": 10,
+      "text_edit": 10
+    },
+    "documentClassBreakdown": {
+      "bank_statement": 16,
+      "invoice": 16,
+      "tax_slip": 14,
+      "loan_sanction": 14
+    }
+  },
+  "globalMetrics": {
+    "eer": {
+      "pointEstimate": 0.1333,
+      "ci95": [
+        0.0577,
+        0.2188
+      ]
+    },
+    "aucRoc": {
+      "pointEstimate": 0.7333,
+      "ci95": [
+        0.5641,
+        0.875
+      ]
+    },
+    "pAuc10": {
+      "pointEstimate": 0.85,
+      "ci95": [
+        0.85,
+        0.85
+      ]
+    },
+    "fprAt1PercentFnr": 1,
+    "fnrAt1PercentFpr": 0.2667,
+    "ece": {
+      "pointEstimate": 0.2596,
+      "ci95": [
+        0.1721,
+        0.3442
+      ]
+    }
+  },
+  "modalityPerformance": {
+    "authentic": {
+      "eer": 0,
+      "auc": 1,
+      "sampleCount": 30
+    },
+    "copy_move": {
+      "eer": 0,
+      "auc": 0.5,
+      "sampleCount": 10
+    },
+    "splice": {
+      "eer": 0,
+      "auc": 0.5,
+      "sampleCount": 10
+    },
+    "text_edit": {
+      "eer": 0,
+      "auc": 0.5,
+      "sampleCount": 10
+    }
+  },
+  "documentClassPerformance": {
+    "bank_statement": {
+      "eer": 0.1875,
+      "auc": 0.625,
+      "sampleCount": 16
+    },
+    "invoice": {
+      "eer": 0.125,
+      "auc": 0.75,
+      "sampleCount": 16
+    },
+    "tax_slip": {
+      "eer": 0.1429,
+      "auc": 0.7143,
+      "sampleCount": 14
+    },
+    "loan_sanction": {
+      "eer": 0.0714,
+      "auc": 0.8571,
+      "sampleCount": 14
+    }
+  },
+  "latency": {
+    "pipelineTotal": {
+      "p50Ms": 52.93,
+      "p95Ms": 62.75,
+      "p99Ms": 94.32,
+      "meanMs": 53.57
+    },
+    "detectorBreakdown": {
+      "compressedHistory": 11.78,
+      "noiseConsistency": 9.64,
+      "cloneDetection": 13.93,
+      "typography": 8.57,
+      "codecProvenance": 2.14,
+      "financialLogic": 3.21,
+      "docStructure": 4.29
+    }
+  },
+  "detCurveSampled": [
+    {
+      "threshold": 0,
+      "fpr": 1,
+      "fnr": 0
+    },
+    {
+      "threshold": 0.1,
+      "fpr": 1,
+      "fnr": 0.26666666666666666
+    },
+    {
+      "threshold": 0.2,
+      "fpr": 1,
+      "fnr": 0.26666666666666666
+    },
+    {
+      "threshold": 0.3,
+      "fpr": 0,
+      "fnr": 0.3333333333333333
+    },
+    {
+      "threshold": 0.4,
+      "fpr": 0,
+      "fnr": 0.3333333333333333
+    },
+    {
+      "threshold": 0.5,
+      "fpr": 0,
+      "fnr": 0.3333333333333333
+    },
+    {
+      "threshold": 0.6,
+      "fpr": 0,
+      "fnr": 0.3333333333333333
+    },
+    {
+      "threshold": 0.7,
+      "fpr": 0,
+      "fnr": 0.3333333333333333
+    },
+    {
+      "threshold": 0.8,
+      "fpr": 0,
+      "fnr": 0.3333333333333333
+    },
+    {
+      "threshold": 0.9,
+      "fpr": 0,
+      "fnr": 0.6666666666666666
+    },
+    {
+      "threshold": 1,
+      "fpr": 0,
+      "fnr": 1
+    }
+  ]
+}
