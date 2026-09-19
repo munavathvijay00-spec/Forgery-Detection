@@ -3,24 +3,24 @@
  * ISO/IEC 27037 Compliant Digital Document Forensic Specification
  * 
  * Reconciles all algorithmic parameters, kernel sizes, quality factors,
- * layer weights, and validation benchmarks across the client platform.
+ * layer weights, risk tiers, and validation benchmarks across the client platform.
  */
 
 (function (global) {
   'use strict';
 
   const FORENSIC_CONFIG = {
-    version: "3.10.0-prod",
+    version: "4.0.0-scientific",
     engine: {
       dctBlockSize: 8, // Discrete Cosine Transform 8x8 baseline grid
       elaQuality: 85, // Error Level Analysis recompression baseline quality (85%)
       elaMultiplier: 24, // Visual difference amplification multiplier
       laplacianKernelSize: 3, // Discrete 3x3 high-pass Laplacian filter
-      laplacianBlurThreshold: 18.0, // Optical sharpness threshold
+      laplacianBlurThreshold: 18.0, // Optical sharpness threshold (Focus measure)
       nccBlockSize: 16, // 16x16 sliding block for copy-move correlation
       nccThreshold: 0.94, // Normalized cross-correlation duplication threshold
       minResolutionDpi: 150, // Minimum required document DPI
-      minShortEdgePx: 1000, // Minimum edge resolution for dependable signal
+      minShortEdgePx: 256, // Minimum edge resolution for dependable signal
       maxFileSizeBytes: 20971520, // 20 MB max file size
       supportedMimeTypes: [
         "image/jpeg",
@@ -34,12 +34,45 @@
       noiseDiscontinuity: 0.22,
       copyMoveNcc: 0.22,
       fontBaselineGeometry: 0.16,
+      financialSemantics: 0.10,
       metadataExif: 0.12
     },
-    decisionThresholds: {
-      authenticMaxScore: 25, // <= 25: Low Risk / Authentic
-      suspiciousMaxScore: 60, // 26 - 60: Medium Risk / Suspicious
-      forgedThreshold: 60 // > 60: High Risk / Altered / Forged
+    riskTiers: {
+      low: { min: 0, max: 24, label: "LOW", desc: "No significant tampering detected" },
+      moderate: { min: 25, max: 49, label: "MODERATE", desc: "Isolated anomaly or image degradation" },
+      elevated: { min: 50, max: 74, label: "ELEVATED", desc: "Multiple anomalies or uncorroborated splice" },
+      high: { min: 75, max: 100, label: "HIGH", desc: "Corroborated forgery or arithmetic balance failure" }
+    },
+    verdicts: {
+      clean: "NO SIGNIFICANT TAMPERING DETECTED",
+      inconclusive: "SUSPICIOUS / INCONCLUSIVE",
+      forged: "LIKELY FORGED"
+    },
+    operations: {
+      op1: {
+        id: 1,
+        name: "Op 1: Substrate Noise & Authenticity",
+        signals: ["noise", "metadata"],
+        description: "Poisson-Gaussian noise variance, PRNU sensor pattern coherence, and container metadata."
+      },
+      op2: {
+        id: 2,
+        name: "Op 2: Spliced Balance & Amounts",
+        signals: ["ela", "semantics"],
+        description: "N-ELA recompression deltas, JPEG ghost curves, and running balance arithmetic reconciliation."
+      },
+      op3: {
+        id: 3,
+        name: "Op 3: Tampered Date & Font Drift",
+        signals: ["geometry"],
+        description: "RANSAC line baseline regression, glyph vertical jitter, and typographical stroke consistency."
+      },
+      op4: {
+        id: 4,
+        name: "Op 4: Cloned Signature & Seal Matcher",
+        signals: ["copyMove"],
+        description: "Spatial 2D Normalized Cross-Correlation and FAST keypoint duplication matching."
+      }
     },
     benchmark: {
       corpusName: "AegisDoc Forensic Benchmark Corpus v2.4 (Synthetic Multi-Bank)",

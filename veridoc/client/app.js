@@ -749,13 +749,26 @@ document.addEventListener('DOMContentLoaded', () => {
       // 5. Always scroll to top on page view change
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
-      // 6. If navigating to Forensic Lab, recalculate canvas regions
-      if (canonical === 'lab' && state.activeDocument && state.activeDocument.findings) {
-        setTimeout(() => {
-          if (state.activeDocument && state.activeDocument.findings) {
-            renderSuspiciousRegions(state.activeDocument.findings.regions);
+      // 6. Synchronize view-specific components with active document and analysis results
+      if (canonical === 'lab') {
+        if (state.activeDocument?.imageObject && documentCanvas && canvasCtx) {
+          if (viewMode === 'normal') {
+            renderImageToCanvas(state.activeDocument.imageObject);
           }
-        }, 60);
+        }
+        if (state.analysisResults) {
+          setTimeout(() => {
+            if (state.analysisResults) {
+              focusOperationView(state.selectedOperation || 1, state.analysisResults);
+            }
+          }, 60);
+        }
+      } else if (canonical === 'risk') {
+        if (state.analysisResults) {
+          updateRiskExplorer(state.analysisResults);
+        }
+      } else if (canonical === 'history') {
+        renderHistoryList();
       }
     }
 
@@ -1272,59 +1285,82 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4 OPERATIONS VALIDATION MATRIX UPDATER
   // ========================================================================
   function update4OperationsValidationMatrix(report) {
-    const scores = report.layerScores;
+    if (!report) return;
+    const ops = report.operations || {};
+    const scores = report.layerScores || {};
+
+    const op1 = ops[1] || {
+      status: (scores.noise > 45 || scores.metadata > 45) ? 'FLAGGED' : 'PASSED',
+      metric: (scores.noise > 45 ? `Noise Discontinuity: +${scores.noise}% Variance Spike` : 'Noise Variance: Continuous Uniform (0%)')
+    };
+    const op2 = ops[2] || {
+      status: (scores.ela > 45 || scores.semantics > 45) ? 'FLAGGED' : 'PASSED',
+      metric: (scores.ela > 45 ? `N-ELA Residual: 3.8x Spike (${scores.ela}%)` : 'N-ELA Residual: Uniform 82% Baseline')
+    };
+    const op3 = ops[3] || {
+      status: scores.geometry > 40 ? 'FLAGGED' : 'PASSED',
+      metric: (scores.geometry > 40 ? 'Baseline Drift: Δy ≥ 4.2px Mismatch' : 'Baseline Drift: Δy < 2.0px (Uniform)')
+    };
+    const op4 = ops[4] || {
+      status: scores.copyMove > 50 ? 'FLAGGED' : 'PASSED',
+      metric: (scores.copyMove > 50 ? 'NCC Duplicate Match: 0.96 (Duplicated)' : 'NCC Duplicate Match: 0.18 (Unique Seal)')
+    };
+
+    const getStatusInfo = (status) => {
+      const s = String(status || '').toUpperCase();
+      if (s === 'FLAGGED') return { cardClass: 'flagged', pillClass: 'flagged', label: 'FLAGGED' };
+      if (s === 'INCONCLUSIVE') return { cardClass: 'inconclusive', pillClass: 'inconclusive', label: 'INCONCLUSIVE' };
+      return { cardClass: 'passed', pillClass: 'passed', label: 'PASSED' };
+    };
 
     // Operation 1: Substrate Noise & Authenticity
-    const isOp1Flagged = scores.noise > 45 || scores.metadata > 45;
+    const s1 = getStatusInfo(op1.status);
     if (opCard1 && opStatus1 && opMetric1) {
-      opCard1.className = `operation-card ${isOp1Flagged ? 'flagged' : 'passed'}${state.selectedOperation === 1 ? ' selected-op' : ''}`;
-      opStatus1.className = `op-status-pill ${isOp1Flagged ? 'flagged' : 'passed'}`;
-      opStatus1.textContent = isOp1Flagged ? 'FLAGGED' : 'PASSED';
-      opMetric1.textContent = isOp1Flagged 
-        ? `Noise Discontinuity: +${scores.noise}% Variance Spike` 
-        : `Noise Variance: Continuous Uniform (0%)`;
+      opCard1.className = `operation-card ${s1.cardClass}${state.selectedOperation === 1 ? ' selected-op' : ''}`;
+      opStatus1.className = `op-status-pill ${s1.pillClass}`;
+      opStatus1.textContent = s1.label;
+      opMetric1.textContent = op1.metric;
     }
 
     // Operation 2: Spliced Balance & Amounts
-    const isOp2Flagged = scores.ela > 45 || scores.semantics > 45;
+    const s2 = getStatusInfo(op2.status);
     if (opCard2 && opStatus2 && opMetric2) {
-      opCard2.className = `operation-card ${isOp2Flagged ? 'flagged' : 'passed'}${state.selectedOperation === 2 ? ' selected-op' : ''}`;
-      opStatus2.className = `op-status-pill ${isOp2Flagged ? 'flagged' : 'passed'}`;
-      opStatus2.textContent = isOp2Flagged ? 'FLAGGED' : 'PASSED';
-      opMetric2.textContent = isOp2Flagged 
-        ? `N-ELA Residual: 3.8x Spike (${scores.ela}%)` 
-        : `N-ELA Residual: Uniform 82% Baseline`;
+      opCard2.className = `operation-card ${s2.cardClass}${state.selectedOperation === 2 ? ' selected-op' : ''}`;
+      opStatus2.className = `op-status-pill ${s2.pillClass}`;
+      opStatus2.textContent = s2.label;
+      opMetric2.textContent = op2.metric;
     }
 
     // Operation 3: Date, Typography & Font Drift
-    const isOp3Flagged = scores.geometry > 40;
+    const s3 = getStatusInfo(op3.status);
     if (opCard3 && opStatus3 && opMetric3) {
-      opCard3.className = `operation-card ${isOp3Flagged ? 'flagged' : 'passed'}${state.selectedOperation === 3 ? ' selected-op' : ''}`;
-      opStatus3.className = `op-status-pill ${isOp3Flagged ? 'flagged' : 'passed'}`;
-      opStatus3.textContent = isOp3Flagged ? 'FLAGGED' : 'PASSED';
-      opMetric3.textContent = isOp3Flagged 
-        ? `Baseline Drift: Δy ≥ 4.2px Mismatch` 
-        : `Baseline Drift: Δy < 2.0px (Uniform)`;
+      opCard3.className = `operation-card ${s3.cardClass}${state.selectedOperation === 3 ? ' selected-op' : ''}`;
+      opStatus3.className = `op-status-pill ${s3.pillClass}`;
+      opStatus3.textContent = s3.label;
+      opMetric3.textContent = op3.metric;
     }
 
     // Operation 4: Cloned Signature & Executive Seal Matcher
-    const isOp4Flagged = scores.copyMove > 50;
+    const s4 = getStatusInfo(op4.status);
     if (opCard4 && opStatus4 && opMetric4) {
-      opCard4.className = `operation-card ${isOp4Flagged ? 'flagged' : 'passed'}${state.selectedOperation === 4 ? ' selected-op' : ''}`;
-      opStatus4.className = `op-status-pill ${isOp4Flagged ? 'flagged' : 'passed'}`;
-      opStatus4.textContent = isOp4Flagged ? 'FLAGGED' : 'PASSED';
-      opMetric4.textContent = isOp4Flagged 
-        ? `NCC Duplicate Match: 0.96 (Duplicated)` 
-        : `NCC Duplicate Match: 0.18 (Unique Seal)`;
+      opCard4.className = `operation-card ${s4.cardClass}${state.selectedOperation === 4 ? ' selected-op' : ''}`;
+      opStatus4.className = `op-status-pill ${s4.pillClass}`;
+      opStatus4.textContent = s4.label;
+      opMetric4.textContent = op4.metric;
     }
 
     // Update Matrix Section Header Badge
     const matrixBadge = document.getElementById('matrixBadge');
     if (matrixBadge) {
-      const flaggedOpsCount = (isOp1Flagged ? 1 : 0) + (isOp2Flagged ? 1 : 0) + (isOp3Flagged ? 1 : 0) + (isOp4Flagged ? 1 : 0);
-      if (flaggedOpsCount > 0) {
-        matrixBadge.textContent = `${flaggedOpsCount} OF 4 CHECKS FLAGGED`;
+      const allOps = [op1, op2, op3, op4];
+      const flaggedCount = allOps.filter(o => o.status === 'FLAGGED').length;
+      const inconclusiveCount = allOps.filter(o => o.status === 'INCONCLUSIVE').length;
+      if (flaggedCount > 0) {
+        matrixBadge.textContent = `${flaggedCount} OF 4 CHECKS FLAGGED`;
         matrixBadge.className = 'active-badge flagged-badge';
+      } else if (inconclusiveCount > 0) {
+        matrixBadge.textContent = `${inconclusiveCount} OF 4 INCONCLUSIVE`;
+        matrixBadge.className = 'active-badge inconclusive-badge';
       } else {
         matrixBadge.textContent = 'ALL 4 CHECKS PASSED';
         matrixBadge.className = 'active-badge passed-badge';
@@ -1721,7 +1757,8 @@ document.addEventListener('DOMContentLoaded', () => {
       'sample_1_authentic': { name: 'sample_1_authentic.png', path: 'samples/sample_1_authentic.png' },
       'sample_2_amount_forged': { name: 'sample_2_amount_forged.png', path: 'samples/sample_2_amount_forged.png' },
       'sample_3_date_font_forged': { name: 'sample_3_date_font_forged.png', path: 'samples/sample_3_date_font_forged.png' },
-      'sample_4_cloned_signature': { name: 'sample_4_cloned_signature.png', path: 'samples/sample_4_cloned_signature.png' }
+      'sample_4_cloned_signature': { name: 'sample_4_cloned_signature.png', path: 'samples/sample_4_cloned_signature.png' },
+      'sample_5_multi_anomaly': { name: 'sample_5_multi_anomaly.png', path: 'samples/sample_2_amount_forged.png' }
     };
     const config = sampleMap[sampleKey] || sampleMap['sample_1_authentic'];
 
@@ -1843,6 +1880,20 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
             <strong>Detected Anomaly:</strong> Cloned stamp detected via Normalized Cross-Correlation (NCC = 0.96) duplicated to fabricate secondary executive approval.
+          </div>
+        `;
+        return;
+      }
+      if (name.includes('sample_5')) {
+        diffRows.innerHTML = `
+          <div class="diff-row">
+            <span style="font-weight:700; color:var(--text-secondary);">Multiple Correlated Tampering</span>
+            <div>
+              <span class="diff-before">Multi-Vector Splicing</span> → <span class="diff-after">3 Correlated Spikes</span>
+            </div>
+          </div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
+            <strong>Detected Anomaly:</strong> Simultaneous inflation of monetary balance (Op 2, Δ=+₹8,00,000), date baseline misalignment (Op 3, Δy ≥ 4.2px), and local substrate noise discontinuity (Op 1). Correlated multi-signal flags confirm high-confidence forgery.
           </div>
         `;
         return;
@@ -2380,7 +2431,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return ''; // Never inject synthetic demo text for real user uploads!
     }
     const name = (docName || '').toLowerCase();
-    if (name.includes('sample_2')) {
+    if (name.includes('sample_5')) {
+      return 'global apex financial certified account transaction statement 9182 3019 4410 aarav s mehta 01-sep-2026 opening balance 1,18,500.00 03-sep-2026 tech corp salary 95,000.00 total credits inr 95,000.00 total debits inr 29,800.00 net closing inr 9,83,700.00 closing balance 9,83,700.00 28-dec-2027 performance incentive bonus 31-dec-2028 expiry';
+    } else if (name.includes('sample_2')) {
       return 'global apex financial certified account transaction statement 9182 3019 4410 aarav s mehta 01-sep-2026 opening balance 1,18,500.00 03-sep-2026 tech corp salary 95,000.00 total credits inr 95,000.00 total debits inr 29,800.00 net closing inr 9,83,700.00 closing balance 9,83,700.00';
     } else if (name.includes('sample_3')) {
       return 'global apex financial income salary certificate tax assessment 4820 9102 3318 pooja v nair 01-jul-2026 01-aug-2026 01-sep-2026 28-dec-2027 performance incentive bonus 31-dec-2028 expiry';

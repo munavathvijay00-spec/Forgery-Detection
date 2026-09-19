@@ -1239,6 +1239,19 @@ body {
   background: var(--color-success);
   color: #ffffff;
 }
+.op-status-pill.inconclusive {
+  background: #f59e0b;
+  color: #ffffff;
+}
+.operation-card.inconclusive {
+  border-left: 4px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.04);
+}
+.active-badge.inconclusive-badge {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
 
 .op-title {
   font-size: 0.88rem;
