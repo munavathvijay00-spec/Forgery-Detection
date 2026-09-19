@@ -1076,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (umProgressBar) umProgressBar.style.width = '80%';
         if (umProgressPct) umProgressPct.textContent = '80%';
-        if (umProgressStepText) umProgressStepText.textContent = 'Running 6-layer on-device convolution...';
+        if (umProgressStepText) umProgressStepText.textContent = 'Executing 6 forensic detectors across 10 pipeline stages...';
 
         await setActiveDocument({
           name: file.name,
@@ -2335,7 +2335,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ❌ Document A is 100% Authentic!
         </div>
         <div style="font-size:0.84rem; color:var(--text-secondary); max-width:640px; margin:0 auto;">
-          Document A passes all 4 operations: uniform 82% ELA residuals, continuous camera noise, and valid checksums. Try selecting Document B!
+          Document A passes all 4 operations: uniform Q=85 ELA residuals, continuous substrate noise, and valid checksums. Try selecting Document B!
         </div>
       `;
     });
@@ -2390,7 +2390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rep.suspiciousRegions && rep.suspiciousRegions.length > 0) {
           certRationaleText.textContent = `Primary Finding: ${rep.suspiciousRegions[0].explanation}`;
         } else {
-          certRationaleText.textContent = `Primary Finding: All 4 forensic operations validated successfully. Continuous substrate noise, uniform 82% ELA compression, and verified typography.`;
+          certRationaleText.textContent = `Primary Finding: All 4 forensic operations validated successfully. Continuous substrate noise, uniform Q=85 ELA compression, and verified typography.`;
         }
       }
     } else {

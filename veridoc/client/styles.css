@@ -4824,5 +4824,94 @@ body {
   margin-left: 4px;
 }
 
+/* Phase 1: Forensic Limitations Banner & Benchmark Notes */
+.forensic-limits-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-left: 4px solid #f59e0b;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.flb-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.flb-content {
+  flex: 1;
+}
+.flb-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.flb-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.18);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.04em;
+}
+.flb-header strong {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+.flb-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+.flb-link {
+  color: #d97706;
+  font-weight: 700;
+  text-decoration: underline;
+  margin-left: 6px;
+  display: inline-block;
+}
+.flb-link:hover {
+  color: #b45309;
+}
+
+.val-synthetic-limits-note {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid #334155;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.vsln-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f59e0b;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.val-synthetic-limits-note ul {
+  margin: 0 0 12px 18px;
+  padding: 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.vsln-footer {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  border-top: 1px dashed #334155;
+  padding-top: 10px;
+}
+
+
 
 

@@ -406,7 +406,7 @@ class AegisForensicEngine {
         score: layerScores.ela,
         metric: layerScores.ela > 45 
           ? `N-ELA Error Spike: ${layerScores.ela}% compression delta` 
-          : 'N-ELA Residuals: Uniform 82% baseline',
+          : 'N-ELA Residuals: Uniform Q=85 baseline',
         regions: [...elaResult.regions, ...semanticResult.regions],
         explanation: elaResult.summary + (semanticResult.regions.length > 0 ? ' ' + semanticResult.summary : ''),
         limitations: 'Repeated multi-generation recompression can attenuate discrete DCT quantization traces.'

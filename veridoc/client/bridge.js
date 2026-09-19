@@ -95,7 +95,7 @@ class AegisOfficeKitBridge {
       return false;
     }
 
-    // Send zero-knowledge summary (NO raw image bytes!)
+    // Send air-gapped summary (SHA-256 hashes and risk metrics only; ZERO pixel bytes transmitted)
     const payload = {
       action: 'sync_telemetry',
       data: {
